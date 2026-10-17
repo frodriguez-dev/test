@@ -1,0 +1,48 @@
+Explicación de los archivos del repositorio
+===========================================
+
+Este documento describe los archivos que tiene el repositorio actualmente.
+
+calculator.py
+    Módulo principal con la lógica de la calculadora. Define dos funciones:
+      - add(a, b): devuelve la suma de a y b.
+      - subtract(a, b): devuelve la resta de a menos b.
+
+pyproject.toml
+    Archivo de configuración del proyecto en formato PEP 621.
+    - Define el proyecto "openhands-test" versión 0.1.0 y requiere Python >= 3.10.
+    - Declara la dependencia de desarrollo "pytest>=8".
+    - Configura pytest (pythonpath = ["."] y testpaths = ["tests"]).
+
+README.md
+    Archivo de texto breve con la descripción del proyecto: "OpenHands Test".
+
+tests/
+    Directorio que contiene las pruebas automatizadas.
+
+    tests/test_calculator.py
+        Pruebas unitarias de las funciones de calculator.py:
+          - test_add
+          - test_subtract_two_positive_numbers
+          - test_subtract_negative_result
+          - test_subtract_negative_numbers
+          - test_subtract_zero_result
+
+    tests/__pycache__/
+        Directorio generado automáticamente por Python con los archivos
+        compilados de las pruebas.
+
+__pycache__/
+    Directorio generado automáticamente por Python con los archivos
+    compilados (por ejemplo, calculator.cpython-314.pyc).
+
+openhands_test.egg-info/
+    Directorio de metadatos generado al instalar el paquete. Contiene:
+      - PKG-INFO: metadatos del paquete.
+      - SOURCES.txt: lista de archivos fuente incluidos.
+      - dependency_links.txt: enlaces de dependencias.
+      - top_level.txt: nombre del paquete de nivel superior ("calculator").
+
+.git/
+    Directorio interno de Git con el historial y la configuración del
+    repositorio.
