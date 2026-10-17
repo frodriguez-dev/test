@@ -17,6 +17,10 @@ pyproject.toml
 README.md
     Archivo de texto breve con la descripción del proyecto: "OpenHands Test".
 
+.gitignore
+    Lista de archivos y directorios generados automáticamente que no deben
+    versionarse (por ejemplo, __pycache__/, *.pyc y *.egg-info/).
+
 tests/
     Directorio que contiene las pruebas automatizadas.
 
@@ -28,20 +32,17 @@ tests/
           - test_subtract_negative_numbers
           - test_subtract_zero_result
 
-    tests/__pycache__/
-        Directorio generado automáticamente por Python con los archivos
-        compilados de las pruebas.
+Archivos generados automáticamente (ignorados por .gitignore)
+--------------------------------------------------------------
+Estos no se versionan en el repositorio:
 
-__pycache__/
-    Directorio generado automáticamente por Python con los archivos
-    compilados (por ejemplo, calculator.cpython-314.pyc).
+    __pycache__/ y tests/__pycache__/
+        Directorios creados por Python con los archivos compilados
+        (por ejemplo, calculator.cpython-314.pyc).
 
-openhands_test.egg-info/
-    Directorio de metadatos generado al instalar el paquete. Contiene:
-      - PKG-INFO: metadatos del paquete.
-      - SOURCES.txt: lista de archivos fuente incluidos.
-      - dependency_links.txt: enlaces de dependencias.
-      - top_level.txt: nombre del paquete de nivel superior ("calculator").
+    openhands_test.egg-info/
+        Directorio de metadatos generado al instalar el paquete
+        (PKG-INFO, SOURCES.txt, dependency_links.txt, top_level.txt).
 
 .git/
     Directorio interno de Git con el historial y la configuración del
