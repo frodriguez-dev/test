@@ -43,8 +43,7 @@ The catalog records candidates and decisions; adoption happens in later tasks.
 
 | Tool | Status | Notes |
 | --- | --- | --- |
-| `pytest` | In use | Root test suite (`python -m pytest`). |
-| `unittest` | In use | Test suites for the `experiments/` applications. |
+| Test framework | Pending evaluation | None configured yet. Selecting one (`pytest` or `unittest`) is **PENDING**. |
 | Coverage measurement | Pending evaluation | Not configured. |
 
 ## Static analysis and code quality

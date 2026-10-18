@@ -99,5 +99,5 @@ iterations:
   `tooling.md`).
 - **PENDING**: which MCP servers, if any, to use and for which capabilities.
 - **PENDING**: how skills should be versioned and shared across repositories.
-- **PENDING**: whether the example implementations in `experiments/` should
-  eventually move to their own repositories.
+- **PENDING**: the project identity (the `pyproject.toml` name still reflects an
+  earlier temporary project and may need to be renamed or removed).

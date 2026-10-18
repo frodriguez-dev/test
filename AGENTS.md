@@ -7,10 +7,10 @@ is intentionally short, concrete, and verifiable.
 
 ## Repository purpose
 
-This is a sandbox for AI-assisted development. It contains small example
-implementations (`calculator.py`, `experiments/csv_analyzer`,
-`experiments/task_manager`) and a provider-independent foundation for agent
-instructions, skills, and documentation.
+This repository is a provider-independent foundation for AI-assisted
+development. It contains instructions for agents (`AGENTS.md`), a skills system
+(`.agents/skills/`), and architecture documentation (`docs/ai/`). It
+intentionally has no application code, tests, or orchestration yet.
 
 ## Before changing anything
 
@@ -36,19 +36,16 @@ instructions, skills, and documentation.
 - Follow PEP 8 and add type hints where they improve clarity.
 - Keep documentation and code comments in English.
 - Do not commit generated files (`__pycache__/`, `*.egg-info/`,
-  `.pytest_cache/`, runtime artifacts such as `tasks.json`). See `.gitignore`.
+  `.pytest_cache/`). See `.gitignore`.
 - Use only the Python standard library unless a dependency is justified by the
   task.
 
 ## Running tests and validating changes
 
-Run the checks relevant to what you changed and report the results.
-
-- Root suite: `python -m pytest`
-- CSV analyzer: `python -m unittest discover -s experiments/csv_analyzer/tests -t .`
-- Task manager: `python -m unittest discover -s experiments/task_manager/tests -v`
-
-Do not claim a change works without running the applicable tests.
+No test framework is configured yet (**PENDING**, see
+`docs/ai/tooling.md`). Once tests exist, run the checks relevant to your change
+and report the results. Do not claim a change works without running the
+applicable tests.
 
 ## Destructive operations
 

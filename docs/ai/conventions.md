@@ -20,9 +20,7 @@ apply on top of the general rules in [`AGENTS.md`](../../AGENTS.md).
 
 ## Repository layout
 
-- Root-level modules are top-level examples (for example `calculator.py`).
-- Larger, self-contained examples live under `experiments/<name>/`, each with
-  its own `README.md` and `tests/` directory.
+- Instructions for agents live in `AGENTS.md`.
 - Foundation documentation lives under `docs/ai/`.
 - Reusable agent skills live under `.agents/skills/<name>/`.
 
@@ -30,13 +28,11 @@ Do not create empty directories or files without a documented purpose.
 
 ## Tests
 
-- Every behavior change must keep the applicable test suites passing.
-- Root suite uses `pytest`:
-  `python -m pytest`.
-- Experiments use the standard library `unittest`:
-  - `python -m unittest discover -s experiments/csv_analyzer/tests -t .`
-  - `python -m unittest discover -s experiments/task_manager/tests -v`
-- Add or update tests when you change behavior.
+- No test framework is configured yet; selecting one is **PENDING** (see
+  [`docs/ai/tooling.md`](tooling.md)).
+- Once a framework is adopted, every behavior change must keep the applicable
+  test suites passing, and tests must be added or updated alongside behavior
+  changes.
 
 ## Generated files
 
@@ -46,7 +42,6 @@ Do not commit generated or runtime files. The following are ignored via
 - `__pycache__/` and `*.py[cod]`
 - `*.egg-info/`
 - `.pytest_cache/`
-- Runtime artifacts such as `tasks.json`
 
 ## Git workflow
 
