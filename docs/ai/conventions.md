@@ -1,0 +1,74 @@
+# Development conventions
+
+Shared conventions for humans and AI agents working in this repository. These
+apply on top of the general rules in [`AGENTS.md`](../../AGENTS.md).
+
+## Language
+
+- Write documentation, code comments, commit messages, and Pull Request
+  descriptions in **English**.
+- Keep identifiers in English and descriptive.
+
+## Python
+
+- Target Python 3.10 or higher, as declared in `pyproject.toml`.
+- Follow [PEP 8](https://peps.python.org/pep-0008/).
+- Add type hints where they improve clarity; avoid redundant annotations.
+- Prefer small, single-purpose functions and clear names.
+- Rely on the standard library. Justify any new dependency in the task and add
+  it to `pyproject.toml` with a reason.
+
+## Repository layout
+
+- Root-level modules are top-level examples (for example `calculator.py`).
+- Larger, self-contained examples live under `experiments/<name>/`, each with
+  its own `README.md` and `tests/` directory.
+- Foundation documentation lives under `docs/ai/`.
+- Reusable agent skills live under `.agents/skills/<name>/`.
+
+Do not create empty directories or files without a documented purpose.
+
+## Tests
+
+- Every behavior change must keep the applicable test suites passing.
+- Root suite uses `pytest`:
+  `python -m pytest`.
+- Experiments use the standard library `unittest`:
+  - `python -m unittest discover -s experiments/csv_analyzer/tests -t .`
+  - `python -m unittest discover -s experiments/task_manager/tests -v`
+- Add or update tests when you change behavior.
+
+## Generated files
+
+Do not commit generated or runtime files. The following are ignored via
+`.gitignore` and must stay untracked:
+
+- `__pycache__/` and `*.py[cod]`
+- `*.egg-info/`
+- `.pytest_cache/`
+- Runtime artifacts such as `tasks.json`
+
+## Git workflow
+
+- Branch from the main branch using a descriptive name, for example
+  `chore/<summary>` or `feature/<summary>`.
+- Use Conventional Commit prefixes: `feat:`, `fix:`, `docs:`, `chore:`,
+  `refactor:`, `test:`.
+- Keep commits focused: one logical change each.
+- Reference the related issue in the commit body or Pull Request.
+- Never rewrite shared history or force-push shared branches without explicit
+  confirmation.
+
+## Documentation
+
+- Update documentation when structure, behavior, or conventions change.
+- Prefer links over duplication; see
+  [`docs/ai/architecture.md`](architecture.md).
+- Mark unresolved choices as **PENDING** instead of presenting them as decided.
+
+## Skills
+
+- Create a skill only when its purpose is clear; see
+  [`.agents/skills/README.md`](../../.agents/skills/README.md).
+- Start from `.agents/skills/_template/SKILL.md`.
+- Keep skills focused; split them when they cover unrelated concerns.
