@@ -1,4 +1,4 @@
-"""Pruebas automatizadas del analizador de CSV de ventas."""
+"""Automated tests for the sales CSV analyzer."""
 
 from __future__ import annotations
 
@@ -7,8 +7,7 @@ import sys
 import tempfile
 import unittest
 
-# Asegura que la raíz del repositorio esté en sys.path sin importar desde dónde
-# se ejecuten las pruebas.
+# Ensure the repository root is on sys.path regardless of where the tests run.
 _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__)
 ))))
@@ -37,33 +36,33 @@ def _write_temp_csv(content: str) -> str:
 
 
 class SaleRecordTests(unittest.TestCase):
-    def test_importe_es_cantidad_por_precio(self):
+    def test_importe_is_cantidad_times_precio(self):
         record = SaleRecord("Laptop", "Electronica", 3, 1200.0)
         self.assertEqual(record.importe, 3600.0)
 
 
 class AnalyzeSampleFileTests(unittest.TestCase):
-    def test_facturacion_total(self):
+    def test_total_revenue(self):
         records, skipped = read_sales(SAMPLE_PATH)
         result = analyze_rows(records, skipped)
         self.assertEqual(result.record_count, 7)
         self.assertAlmostEqual(result.total, 8075.0)
         self.assertEqual(result.skipped_rows, [])
 
-    def test_facturacion_por_categoria(self):
+    def test_revenue_by_category(self):
         result = analyze_rows(*read_sales(SAMPLE_PATH))
         self.assertAlmostEqual(result.by_category["Electronica"], 6255.0)
         self.assertAlmostEqual(result.by_category["Muebles"], 1200.0)
         self.assertAlmostEqual(result.by_category["Ropa"], 620.0)
 
-    def test_producto_mayor_facturacion(self):
+    def test_top_product_by_revenue(self):
         result = analyze_rows(*read_sales(SAMPLE_PATH))
         self.assertEqual(result.top_product, "Laptop")
         self.assertAlmostEqual(result.top_product_total, 6000.0)
 
 
 class EmptyAndInvalidInputTests(unittest.TestCase):
-    def test_archivo_vacio(self):
+    def test_empty_file(self):
         path = _write_temp_csv("")
         try:
             records, skipped = read_sales(path)
@@ -75,7 +74,7 @@ class EmptyAndInvalidInputTests(unittest.TestCase):
         finally:
             os.remove(path)
 
-    def test_solo_cabecera(self):
+    def test_header_only(self):
         path = _write_temp_csv("producto,categoria,cantidad,precio\n")
         try:
             result = analyze_rows(*read_sales(path))
@@ -84,7 +83,7 @@ class EmptyAndInvalidInputTests(unittest.TestCase):
         finally:
             os.remove(path)
 
-    def test_columnas_faltantes(self):
+    def test_missing_columns(self):
         path = _write_temp_csv("producto,cantidad\nLaptop,3\n")
         try:
             with self.assertRaises(CsvAnalysisError):
@@ -92,7 +91,7 @@ class EmptyAndInvalidInputTests(unittest.TestCase):
         finally:
             os.remove(path)
 
-    def test_valores_invalidos_se_omiten(self):
+    def test_invalid_values_are_skipped(self):
         content = (
             "producto,categoria,cantidad,precio\n"
             "Laptop,Electronica,3,1200.00\n"
@@ -110,7 +109,7 @@ class EmptyAndInvalidInputTests(unittest.TestCase):
         finally:
             os.remove(path)
 
-    def test_coma_como_separador_decimal(self):
+    def test_comma_as_decimal_separator(self):
         content = (
             "producto,categoria,cantidad,precio\n"
             'Tornillo,Ferreteria,100,"0,25"\n'
@@ -124,7 +123,7 @@ class EmptyAndInvalidInputTests(unittest.TestCase):
         finally:
             os.remove(path)
 
-    def test_empate_elige_nombre_alfabetico(self):
+    def test_tie_breaks_on_alphabetical_name(self):
         records = [
             SaleRecord("Zeta", "Cat", 1, 100.0),
             SaleRecord("Alfa", "Cat", 1, 100.0),

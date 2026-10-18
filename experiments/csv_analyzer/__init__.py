@@ -1,7 +1,7 @@
-"""Analizador de datos CSV de ventas.
+"""CSV sales data analyzer.
 
-Expone la lógica principal para leer un CSV de ventas y calcular
-estadísticas de facturación usando únicamente la biblioteca estándar.
+Exposes the main logic to read a sales CSV file and compute revenue
+statistics using only the standard library.
 """
 
 from .analyzer import (

@@ -1,10 +1,10 @@
-"""Lógica de análisis de un CSV de ventas.
+"""Analysis logic for a sales CSV file.
 
-El CSV de entrada debe contener las columnas ``producto``, ``categoria``,
-``cantidad`` y ``precio``. A partir de ellas se calcula el importe de cada
-registro (``cantidad * precio``) y distintas estadísticas de facturación.
+The input CSV must contain the columns ``producto``, ``categoria``,
+``cantidad`` and ``precio``. From them, the amount of each record is computed
+(``cantidad * precio``) along with several revenue statistics.
 
-Solo se utiliza la biblioteca estándar de Python.
+Only the Python standard library is used.
 """
 
 from __future__ import annotations
@@ -17,12 +17,12 @@ REQUIRED_COLUMNS = ("producto", "categoria", "cantidad", "precio")
 
 
 class CsvAnalysisError(Exception):
-    """Error irrecuperable al procesar el CSV (por ejemplo, columnas faltantes)."""
+    """Unrecoverable error while processing the CSV (e.g. missing columns)."""
 
 
 @dataclass(frozen=True)
 class SaleRecord:
-    """Un registro válido de venta."""
+    """A valid sales record."""
 
     producto: str
     categoria: str
@@ -31,13 +31,13 @@ class SaleRecord:
 
     @property
     def importe(self) -> float:
-        """Importe del registro: cantidad x precio."""
+        """Record amount: cantidad x precio."""
         return self.cantidad * self.precio
 
 
 @dataclass
 class AnalysisResult:
-    """Resultado del análisis de un conjunto de ventas."""
+    """Result of analyzing a set of sales records."""
 
     record_count: int = 0
     total: float = 0.0
@@ -48,57 +48,55 @@ class AnalysisResult:
 
     @property
     def has_data(self) -> bool:
-        """Indica si se procesó al menos un registro válido."""
+        """Whether at least one valid record was processed."""
         return self.record_count > 0
 
 
 def _parse_number(raw: str) -> float:
-    """Convierte un texto en número.
+    """Convert text into a number.
 
-    Acepta separador decimal con punto o coma (por ejemplo ``"12,5"``).
-    Lanza ``ValueError`` si el valor no es numérico.
+    Accepts a decimal separator using a dot or a comma (for example ``"12,5"``).
+    Raises ``ValueError`` if the value is not numeric.
     """
     text = (raw or "").strip()
     if not text:
-        raise ValueError("valor vacío")
+        raise ValueError("empty value")
     try:
         return float(text)
     except ValueError:
-        # Permite el uso de coma como separador decimal.
+        # Allow a comma as the decimal separator.
         if "," in text and "." not in text:
             return float(text.replace(",", "."))
         raise
 
 
 def read_sales(path: str) -> tuple[list[SaleRecord], list[str]]:
-    """Lee un CSV de ventas.
+    """Read a sales CSV file.
 
-    Devuelve una tupla ``(registros_validos, filas_omitidas)``.
+    Returns a tuple ``(valid_records, skipped_rows)``.
 
-    - Si el archivo está vacío o no tiene cabecera, se devuelve una lista
-      vacía de registros.
-    - Si falta alguna de las columnas requeridas, se lanza
-      ``CsvAnalysisError``.
-    - Las filas con valores inválidos se omiten y se registran en
-      ``filas_omitidas``.
+    - If the file is empty or has no header, an empty list of records is
+      returned.
+    - If any required column is missing, ``CsvAnalysisError`` is raised.
+    - Rows with invalid values are skipped and recorded in ``skipped_rows``.
     """
     with open(path, newline="", encoding="utf-8") as handle:
         reader = csv.reader(handle)
         try:
             header = next(reader)
         except StopIteration:
-            # Archivo completamente vacío.
+            # Completely empty file.
             return [], []
 
         header = [column.strip().lower() for column in header]
         if not any(header):
-            # Cabecera vacía (por ejemplo, solo una línea en blanco).
+            # Empty header (for example, a single blank line).
             return [], []
 
         missing = [column for column in REQUIRED_COLUMNS if column not in header]
         if missing:
             raise CsvAnalysisError(
-                "Faltan columnas requeridas en el CSV: " + ", ".join(missing)
+                "Missing required columns in the CSV: " + ", ".join(missing)
             )
 
         index = {column: header.index(column) for column in REQUIRED_COLUMNS}
@@ -108,7 +106,7 @@ def read_sales(path: str) -> tuple[list[SaleRecord], list[str]]:
 
         for line_number, row in enumerate(reader, start=2):
             if not row or not any(cell.strip() for cell in row):
-                continue  # Ignora líneas totalmente vacías.
+                continue  # Ignore fully blank lines.
 
             try:
                 producto = row[index["producto"]].strip()
@@ -116,11 +114,11 @@ def read_sales(path: str) -> tuple[list[SaleRecord], list[str]]:
                 cantidad = _parse_number(row[index["cantidad"]])
                 precio = _parse_number(row[index["precio"]])
                 if not producto:
-                    raise ValueError("producto vacío")
+                    raise ValueError("empty product")
                 if not categoria:
-                    raise ValueError("categoría vacía")
+                    raise ValueError("empty category")
             except (IndexError, ValueError) as exc:
-                skipped.append(f"línea {line_number}: {exc}")
+                skipped.append(f"line {line_number}: {exc}")
                 continue
 
             records.append(
@@ -136,7 +134,7 @@ def read_sales(path: str) -> tuple[list[SaleRecord], list[str]]:
 
 
 def analyze_rows(records: Iterable[SaleRecord], skipped: list[str] | None = None) -> AnalysisResult:
-    """Calcula las estadísticas de facturación a partir de los registros."""
+    """Compute revenue statistics from the given records."""
     result = AnalysisResult(skipped_rows=list(skipped or []))
     product_totals: dict[str, float] = {}
 
@@ -152,7 +150,7 @@ def analyze_rows(records: Iterable[SaleRecord], skipped: list[str] | None = None
         )
 
     if product_totals:
-        # Mayor facturación; en caso de empate, nombre alfabéticamente menor.
+        # Highest revenue; on a tie, the alphabetically smallest name.
         top_product = sorted(
             product_totals, key=lambda name: (-product_totals[name], name)
         )[0]
@@ -163,6 +161,6 @@ def analyze_rows(records: Iterable[SaleRecord], skipped: list[str] | None = None
 
 
 def analyze_file(path: str) -> AnalysisResult:
-    """Lee y analiza un archivo CSV de ventas en un solo paso."""
+    """Read and analyze a sales CSV file in a single step."""
     records, skipped = read_sales(path)
     return analyze_rows(records, skipped)

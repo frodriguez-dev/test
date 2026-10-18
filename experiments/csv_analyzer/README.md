@@ -1,17 +1,17 @@
-# Analizador de datos CSV
+# CSV Data Analyzer
 
-Aplicación de línea de comandos en Python 3 (solo biblioteca estándar) para
-analizar archivos CSV con información de ventas y generar estadísticas.
+A Python 3 command-line application (standard library only) to analyze CSV
+files with sales information and produce statistics.
 
-## Requisitos
+## Requirements
 
-- Python 3.10 o superior.
-- No requiere instalar dependencias adicionales.
+- Python 3.10 or higher.
+- No additional dependencies are required.
 
-## Formato del CSV
+## CSV format
 
-El archivo debe incluir la cabecera con las columnas `producto`, `categoria`,
-`cantidad` y `precio`:
+The file must include a header with the `producto`, `categoria`, `cantidad`
+and `precio` columns:
 
 ```csv
 producto,categoria,cantidad,precio
@@ -19,65 +19,65 @@ Laptop,Electronica,3,1200.00
 Mouse,Electronica,10,25.50
 ```
 
-Los encabezados no distinguen mayúsculas/minúsculas ni espacios sobrantes.
-El separador decimal puede ser punto o coma.
+Header matching is case-insensitive and ignores surrounding whitespace.
+The decimal separator may be a dot or a comma.
 
-## Uso
+## Usage
 
-Desde la raíz del repositorio:
+From the repository root:
 
 ```bash
 python -m experiments.csv_analyzer experiments/csv_analyzer/ventas.csv
 ```
 
-Salida de ejemplo:
+Sample output:
 
 ```
 ==============================================
-RESUMEN DE VENTAS
+SALES SUMMARY
 ==============================================
-Registros analizados : 7
-Facturación total    : 8,075.00
+Records analyzed  : 7
+Total revenue     : 8,075.00
 
-Facturación por categoría:
+Revenue by category:
   - Electronica: 6,255.00
   - Muebles: 1,200.00
   - Ropa: 620.00
 
-Producto con mayor facturación: Laptop (6,000.00)
+Top product by revenue: Laptop (6,000.00)
 ==============================================
 ```
 
-## Cálculos
+## Calculations
 
-- **Importe de cada registro**: `cantidad * precio`.
-- **Facturación total**: suma de todos los importes.
-- **Facturación por categoría**: suma agrupada por `categoria`.
-- **Producto con mayor facturación**: mayor importe acumulado por `producto`
-  (en caso de empate se elige el nombre alfabéticamente menor).
+- **Amount per record**: `cantidad * precio`.
+- **Total revenue**: sum of all amounts.
+- **Revenue by category**: sum grouped by `categoria`.
+- **Top product by revenue**: the highest accumulated amount per `producto`
+  (on a tie, the alphabetically smallest name is chosen).
 
-## Manejo de errores
+## Error handling
 
-- **Archivo vacío o solo cabecera**: se informa que no hay registros válidos.
-- **Columnas requeridas faltantes**: se muestra un error y el programa termina
-  con código de salida `1`.
-- **Archivo inexistente**: se muestra un error y el programa termina con código
-  de salida `2`.
-- **Valores inválidos** (números no numéricos, campos vacíos): la fila se omite
-  y se reporta en el resumen.
+- **Empty file or header only**: it reports that there are no valid records.
+- **Missing required columns**: an error is displayed and the program exits
+  with status code `1`.
+- **Nonexistent file**: an error is displayed and the program exits with
+  status code `2`.
+- **Invalid values** (non-numeric numbers, empty fields): the row is skipped
+  and reported in the summary.
 
-## Pruebas automatizadas
+## Automated tests
 
-Las pruebas usan `unittest` y están en
+The tests use `unittest` and live in
 `experiments/csv_analyzer/tests/test_analyzer.py`.
 
-Desde la raíz del repositorio:
+From the repository root:
 
 ```bash
 python -m unittest discover -s experiments/csv_analyzer/tests -t .
 ```
 
-O directamente:
+Or directly:
 
 ```bash
 python experiments/csv_analyzer/tests/test_analyzer.py
