@@ -1,4 +1,4 @@
-"""Pruebas unitarias del gestor de tareas (biblioteca estándar: unittest)."""
+"""Unit tests for the task manager (standard library: unittest)."""
 
 import io
 import json
@@ -8,7 +8,7 @@ import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
-# Permite importar el paquete al ejecutar las pruebas directamente.
+# Allow importing the package when running the tests directly.
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
 from experiments.task_manager.cli import main
@@ -25,15 +25,15 @@ class TaskManagerTest(unittest.TestCase):
         self.tmp.cleanup()
 
     # ------------------------------------------------------------------
-    # Creación
+    # Creation
     # ------------------------------------------------------------------
     def test_add_task_assigns_incremental_ids(self) -> None:
-        first = self.manager.add_task("Primera")
-        second = self.manager.add_task("Segunda", "con descripción")
+        first = self.manager.add_task("First")
+        second = self.manager.add_task("Second", "with description")
 
         self.assertEqual(first.id, 1)
         self.assertEqual(second.id, 2)
-        self.assertEqual(second.description, "con descripción")
+        self.assertEqual(second.description, "with description")
         self.assertFalse(first.completed)
 
     def test_add_task_rejects_empty_title(self) -> None:
@@ -41,7 +41,7 @@ class TaskManagerTest(unittest.TestCase):
             self.manager.add_task("   ")
 
     # ------------------------------------------------------------------
-    # Listado
+    # Listing
     # ------------------------------------------------------------------
     def test_list_tasks_returns_sorted_tasks(self) -> None:
         self.manager.add_task("A")
@@ -51,10 +51,10 @@ class TaskManagerTest(unittest.TestCase):
         self.assertEqual(titles, ["A", "B"])
 
     # ------------------------------------------------------------------
-    # Completar
+    # Completion
     # ------------------------------------------------------------------
     def test_complete_task_marks_as_completed(self) -> None:
-        task = self.manager.add_task("Hacer la compra")
+        task = self.manager.add_task("Do the shopping")
 
         completed = self.manager.complete_task(task.id)
 
@@ -66,10 +66,10 @@ class TaskManagerTest(unittest.TestCase):
             self.manager.complete_task(99)
 
     # ------------------------------------------------------------------
-    # Eliminar
+    # Deletion
     # ------------------------------------------------------------------
     def test_delete_task_removes_it(self) -> None:
-        task = self.manager.add_task("Temporal")
+        task = self.manager.add_task("Temporary")
 
         self.manager.delete_task(task.id)
 
@@ -80,30 +80,30 @@ class TaskManagerTest(unittest.TestCase):
             self.manager.delete_task(42)
 
     # ------------------------------------------------------------------
-    # Persistencia
+    # Persistence
     # ------------------------------------------------------------------
     def test_tasks_persist_between_instances(self) -> None:
-        self.manager.add_task("Persistente", "guardada")
+        self.manager.add_task("Persistent", "saved")
         self.manager.complete_task(1)
 
         reloaded = TaskManager(storage_path=self.storage)
 
         self.assertEqual(len(reloaded.list_tasks()), 1)
         task = reloaded.get_task(1)
-        self.assertEqual(task.title, "Persistente")
-        self.assertEqual(task.description, "guardada")
+        self.assertEqual(task.title, "Persistent")
+        self.assertEqual(task.description, "saved")
         self.assertTrue(task.completed)
 
     def test_storage_file_is_valid_json(self) -> None:
-        self.manager.add_task("JSON válido")
+        self.manager.add_task("Valid JSON")
 
         data = json.loads(self.storage.read_text(encoding="utf-8"))
 
         self.assertIsInstance(data, list)
-        self.assertEqual(data[0]["title"], "JSON válido")
+        self.assertEqual(data[0]["title"], "Valid JSON")
 
     def test_load_raises_on_invalid_json(self) -> None:
-        self.storage.write_text("{ no es json", encoding="utf-8")
+        self.storage.write_text("{ not json", encoding="utf-8")
 
         with self.assertRaises(ValueError):
             TaskManager(storage_path=self.storage)
@@ -124,17 +124,17 @@ class CliTest(unittest.TestCase):
         return code, out.getvalue(), err.getvalue()
 
     def test_add_and_list_flow(self) -> None:
-        code, out, _ = self._run("add", "Estudiar", "-d", "Python")
+        code, out, _ = self._run("add", "Study", "-d", "Python")
         self.assertEqual(code, 0)
-        self.assertIn("Estudiar", out)
+        self.assertIn("Study", out)
 
         code, out, _ = self._run("list")
         self.assertEqual(code, 0)
-        self.assertIn("Estudiar", out)
+        self.assertIn("Study", out)
         self.assertIn("[ ]", out)
 
     def test_complete_and_delete_flow(self) -> None:
-        self._run("add", "Tarea")
+        self._run("add", "Task")
 
         code, out, _ = self._run("complete", "1")
         self.assertEqual(code, 0)
@@ -142,20 +142,20 @@ class CliTest(unittest.TestCase):
 
         code, out, _ = self._run("delete", "1")
         self.assertEqual(code, 0)
-        self.assertIn("eliminada", out)
+        self.assertIn("deleted", out)
 
         _, out, _ = self._run("list")
-        self.assertIn("No hay tareas", out)
+        self.assertIn("No tasks", out)
 
     def test_nonexistent_id_returns_error(self) -> None:
         code, _, err = self._run("complete", "99")
 
         self.assertEqual(code, 1)
-        self.assertIn("No existe", err)
+        self.assertIn("No task found", err)
 
     def test_invalid_arguments_exit(self) -> None:
         with self.assertRaises(SystemExit):
-            main(["--file", str(self.storage), "complete", "no-un-numero"])
+            main(["--file", str(self.storage), "complete", "not-a-number"])
 
 
 if __name__ == "__main__":

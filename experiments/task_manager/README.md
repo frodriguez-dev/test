@@ -1,136 +1,134 @@
-# Gestor de tareas por consola
+# Console Task Manager
 
-Aplicación de línea de comandos escrita en Python que permite gestionar tareas
-personales y persistirlas automáticamente en un archivo JSON.
+A command-line application written in Python that lets you manage personal
+tasks and persists them automatically to a JSON file.
 
-Usa **exclusivamente la biblioteca estándar** de Python (no requiere instalar
-dependencias).
+It uses **only the Python standard library** (no extra dependencies required).
 
-## Requisitos
+## Requirements
 
-- Python 3.10 o superior.
+- Python 3.10 or higher.
 
-## Estructura
+## Structure
 
 ```
 experiments/task_manager/
-├── __init__.py              # Exporta las clases públicas
-├── __main__.py              # Permite ejecutar con python -m
-├── cli.py                   # Interfaz de línea de comandos (argparse)
-├── task_manager.py          # Lógica de tareas y persistencia en JSON
+├── __init__.py              # Exposes the public classes
+├── __main__.py              # Allows running with python -m
+├── cli.py                   # Command-line interface (argparse)
+├── task_manager.py          # Task logic and JSON persistence
 ├── README.md
 └── tests/
-    └── test_task_manager.py # Pruebas unitarias con unittest
+    └── test_task_manager.py # Unit tests with unittest
 ```
 
-## Uso
+## Usage
 
-Ejecuta la aplicación como módulo desde la raíz del repositorio:
+Run the application as a module from the repository root:
 
 ```bash
-python -m experiments.task_manager <comando> [opciones]
+python -m experiments.task_manager <command> [options]
 ```
 
-### Comandos disponibles
+### Available commands
 
-| Comando    | Descripción                              |
+| Command    | Description                              |
 | ---------- | ---------------------------------------- |
-| `add`      | Crea una tarea nueva.                    |
-| `list`     | Lista todas las tareas con su estado.    |
-| `complete` | Marca una tarea como completada.         |
-| `delete`   | Elimina una tarea.                       |
+| `add`      | Create a new task.                       |
+| `list`     | List all tasks with their status.        |
+| `complete` | Mark a task as completed.                |
+| `delete`   | Delete a task.                           |
 
-Opciones globales:
+Global options:
 
-- `--file RUTA`: ruta del archivo JSON de tareas (por defecto `tasks.json`).
+- `--file PATH`: path to the JSON tasks file (default: `tasks.json`).
 
-### Ejemplos
+### Examples
 
-Crear una tarea con descripción opcional:
+Create a task with an optional description:
 
 ```bash
-python -m experiments.task_manager add "Comprar pan" -d "Integral"
-# Tarea creada:   1 [ ] Comprar pan  (integral)
+python -m experiments.task_manager add "Buy bread" -d "Whole wheat"
+# Task created:   1 [ ] Buy bread  (Whole wheat)
 
-python -m experiments.task_manager add "Estudiar Python"
-# Tarea creada:   2 [ ] Estudiar Python
+python -m experiments.task_manager add "Study Python"
+# Task created:   2 [ ] Study Python
 ```
 
-Listar las tareas (el estado se muestra como `[ ]` pendiente y `[x]` completada):
+List tasks (status is shown as `[ ]` pending and `[x]` completed):
 
 ```bash
 python -m experiments.task_manager list
-#   1 [ ] Comprar pan  (integral)
-#   2 [ ] Estudiar Python
+#   1 [ ] Buy bread  (Whole wheat)
+#   2 [ ] Study Python
 ```
 
-Marcar una tarea como completada:
+Mark a task as completed:
 
 ```bash
 python -m experiments.task_manager complete 1
-# Tarea completada:   1 [x] Comprar pan  (integral)
+# Task completed:   1 [x] Buy bread  (Whole wheat)
 ```
 
-Eliminar una tarea:
+Delete a task:
 
 ```bash
 python -m experiments.task_manager delete 2
-# Tarea eliminada:   2 [ ] Estudiar Python
+# Task deleted:   2 [ ] Study Python
 ```
 
-Usar un archivo de almacenamiento distinto:
+Use a different storage file:
 
 ```bash
-python -m experiments.task_manager --file mis_tareas.json list
+python -m experiments.task_manager --file my_tasks.json list
 ```
 
-### Manejo de errores
+### Error handling
 
-- Un ID inexistente muestra un mensaje de error y devuelve el código de salida
-  `1`:
+- A nonexistent ID prints an error message and returns exit code `1`:
 
   ```bash
   python -m experiments.task_manager complete 99
-  # Error: No existe una tarea con el ID 99.
+  # Error: No task found with ID 99.
   ```
 
-- Un título vacío en `add` también finaliza con un error.
-- Argumentos inválidos (por ejemplo, un ID no numérico) son rechazados por
-  `argparse` con un mensaje de uso.
+- An empty title in `add` also ends with an error.
+- Invalid arguments (for example, a non-numeric ID) are rejected by `argparse`
+  with a usage message.
 
-## Persistencia
+## Persistence
 
-Las tareas se guardan automáticamente tras cada operación que modifica el estado
-(`add`, `complete`, `delete`) en el archivo JSON indicado (por defecto
-`tasks.json`). Al volver a ejecutar la aplicación, las tareas se cargan desde ese
-archivo.
+Tasks are saved automatically after every operation that modifies state
+(`add`, `complete`, `delete`) in the specified JSON file (default
+`tasks.json`). When you run the application again, tasks are loaded from that
+file.
 
-Formato del archivo:
+File format:
 
 ```json
 [
   {
     "id": 1,
-    "title": "Comprar pan",
-    "description": "Integral",
+    "title": "Buy bread",
+    "description": "Whole wheat",
     "completed": true
   }
 ]
 ```
 
-> El archivo `tasks.json` es un artefacto generado en tiempo de ejecución y no
-> debería versionarse.
+> The `tasks.json` file is a runtime-generated artifact and should not be
+> versioned.
 
-## Pruebas
+## Tests
 
-Las pruebas usan `unittest` de la biblioteca estándar. Ejecútalas desde la raíz
-del repositorio:
+The tests use the standard library `unittest`. Run them from the repository
+root:
 
 ```bash
 python -m unittest discover -s experiments/task_manager/tests -v
 ```
 
-También puedes ejecutar el archivo de pruebas directamente:
+You can also run the test file directly:
 
 ```bash
 python experiments/task_manager/tests/test_task_manager.py

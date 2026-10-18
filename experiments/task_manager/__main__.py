@@ -1,4 +1,4 @@
-"""Permite ejecutar la CLI con ``python -m experiments.task_manager``."""
+"""Allow running the CLI with ``python -m experiments.task_manager``."""
 
 from .cli import main
 

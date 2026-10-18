@@ -1,8 +1,8 @@
-"""Interfaz de línea de comandos del gestor de tareas.
+"""Command-line interface for the task manager.
 
-Uso::
+Usage::
 
-    python -m experiments.task_manager add "Comprar pan" --description "Integral"
+    python -m experiments.task_manager add "Buy bread" --description "Whole wheat"
     python -m experiments.task_manager list
     python -m experiments.task_manager complete 1
     python -m experiments.task_manager delete 1
@@ -30,40 +30,40 @@ def _format_task(task: Task) -> str:
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="task-manager",
-        description="Gestor de tareas por consola con persistencia en JSON.",
+        description="Console task manager with JSON persistence.",
     )
     parser.add_argument(
         "--file",
         default=str(DEFAULT_STORAGE),
-        help="Ruta del archivo JSON de tareas (por defecto: tasks.json).",
+        help="Path to the JSON tasks file (default: tasks.json).",
     )
 
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    add_parser = subparsers.add_parser("add", help="Crear una tarea nueva.")
-    add_parser.add_argument("title", help="Título de la tarea.")
+    add_parser = subparsers.add_parser("add", help="Create a new task.")
+    add_parser.add_argument("title", help="Task title.")
     add_parser.add_argument(
         "-d",
         "--description",
         default="",
-        help="Descripción opcional de la tarea.",
+        help="Optional task description.",
     )
 
-    subparsers.add_parser("list", help="Listar todas las tareas.")
+    subparsers.add_parser("list", help="List all tasks.")
 
     complete_parser = subparsers.add_parser(
-        "complete", help="Marcar una tarea como completada."
+        "complete", help="Mark a task as completed."
     )
-    complete_parser.add_argument("id", type=int, help="ID de la tarea.")
+    complete_parser.add_argument("id", type=int, help="Task ID.")
 
-    delete_parser = subparsers.add_parser("delete", help="Eliminar una tarea.")
-    delete_parser.add_argument("id", type=int, help="ID de la tarea.")
+    delete_parser = subparsers.add_parser("delete", help="Delete a task.")
+    delete_parser.add_argument("id", type=int, help="Task ID.")
 
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Punto de entrada de la CLI. Devuelve el código de salida."""
+    """CLI entry point. Returns the exit code."""
     parser = _build_parser()
     args = parser.parse_args(argv)
 
@@ -72,20 +72,20 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command == "add":
             task = manager.add_task(args.title, args.description)
-            print(f"Tarea creada: {_format_task(task)}")
+            print(f"Task created: {_format_task(task)}")
         elif args.command == "list":
             tasks = manager.list_tasks()
             if not tasks:
-                print("No hay tareas registradas.")
+                print("No tasks registered.")
             else:
                 for task in tasks:
                     print(_format_task(task))
         elif args.command == "complete":
             task = manager.complete_task(args.id)
-            print(f"Tarea completada: {_format_task(task)}")
+            print(f"Task completed: {_format_task(task)}")
         elif args.command == "delete":
             task = manager.delete_task(args.id)
-            print(f"Tarea eliminada: {_format_task(task)}")
+            print(f"Task deleted: {_format_task(task)}")
     except TaskNotFoundError as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1

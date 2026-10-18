@@ -1,7 +1,7 @@
-"""Gestor de tareas por consola.
+"""Console task manager.
 
-Paquete que contiene la lógica de gestión de tareas y la interfaz de línea
-de comandos para administrarlas.
+Package that contains the task-management logic and the command-line
+interface used to operate on tasks.
 """
 
 from .task_manager import Task, TaskManager, TaskNotFoundError

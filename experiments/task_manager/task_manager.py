@@ -1,8 +1,8 @@
-"""Lógica de gestión de tareas con persistencia en JSON.
+"""Task-management logic with JSON persistence.
 
-Este módulo implementa :class:`TaskManager`, que administra una colección de
-tareas personales y las persiste automáticamente en un archivo JSON. No usa
-dependencias externas: solo la biblioteca estándar de Python.
+This module implements :class:`TaskManager`, which manages a collection of
+personal tasks and persists them automatically to a JSON file. It uses no
+external dependencies: only the Python standard library.
 """
 
 from __future__ import annotations
@@ -14,16 +14,16 @@ from typing import Any
 
 
 class TaskNotFoundError(Exception):
-    """Se lanza cuando se referencia un ID de tarea inexistente."""
+    """Raised when a nonexistent task ID is referenced."""
 
     def __init__(self, task_id: int) -> None:
         self.task_id = task_id
-        super().__init__(f"No existe una tarea con el ID {task_id}.")
+        super().__init__(f"No task found with ID {task_id}.")
 
 
 @dataclass
 class Task:
-    """Representa una tarea individual."""
+    """Represents a single task."""
 
     id: int
     title: str
@@ -31,12 +31,12 @@ class Task:
     completed: bool = False
 
     def to_dict(self) -> dict[str, Any]:
-        """Devuelve la tarea como un diccionario serializable."""
+        """Return the task as a serializable dictionary."""
         return asdict(self)
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "Task":
-        """Construye una tarea a partir de un diccionario."""
+        """Build a task from a dictionary."""
         return cls(
             id=int(data["id"]),
             title=str(data["title"]),
@@ -47,10 +47,10 @@ class Task:
 
 @dataclass
 class TaskManager:
-    """Administra tareas y las persiste en un archivo JSON.
+    """Manage tasks and persist them to a JSON file.
 
-    Cada operación que modifica el estado (crear, completar o eliminar) guarda
-    automáticamente los cambios en disco.
+    Every operation that modifies state (create, complete, or delete)
+    automatically saves the changes to disk.
     """
 
     storage_path: Path = field(default_factory=lambda: Path("tasks.json"))
@@ -61,10 +61,10 @@ class TaskManager:
         self.load()
 
     # ------------------------------------------------------------------
-    # Persistencia
+    # Persistence
     # ------------------------------------------------------------------
     def load(self) -> None:
-        """Carga las tareas desde el archivo JSON, si existe."""
+        """Load tasks from the JSON file, if it exists."""
         if not self.storage_path.exists():
             self.tasks = []
             return
@@ -78,18 +78,18 @@ class TaskManager:
             data = json.loads(raw)
         except json.JSONDecodeError as exc:
             raise ValueError(
-                f"El archivo {self.storage_path} no contiene JSON válido: {exc}"
+                f"File {self.storage_path} does not contain valid JSON: {exc}"
             ) from exc
 
         if not isinstance(data, list):
             raise ValueError(
-                f"El archivo {self.storage_path} debe contener una lista de tareas."
+                f"File {self.storage_path} must contain a list of tasks."
             )
 
         self.tasks = [Task.from_dict(item) for item in data]
 
     def save(self) -> None:
-        """Escribe las tareas actuales en el archivo JSON."""
+        """Write the current tasks to the JSON file."""
         self.storage_path.parent.mkdir(parents=True, exist_ok=True)
         payload = [task.to_dict() for task in self.tasks]
         self.storage_path.write_text(
@@ -98,24 +98,24 @@ class TaskManager:
         )
 
     # ------------------------------------------------------------------
-    # Operaciones
+    # Operations
     # ------------------------------------------------------------------
     def _next_id(self) -> int:
         return max((task.id for task in self.tasks), default=0) + 1
 
     def add_task(self, title: str, description: str = "") -> Task:
-        """Crea una tarea nueva y la persiste.
+        """Create a new task and persist it.
 
         Args:
-            title: Título de la tarea. No puede estar vacío.
-            description: Descripción opcional.
+            title: Task title. It cannot be empty.
+            description: Optional description.
 
         Returns:
-            La tarea creada.
+            The created task.
         """
         title = title.strip()
         if not title:
-            raise ValueError("El título de la tarea no puede estar vacío.")
+            raise ValueError("Task title cannot be empty.")
 
         task = Task(id=self._next_id(), title=title, description=description.strip())
         self.tasks.append(task)
@@ -123,14 +123,14 @@ class TaskManager:
         return task
 
     def list_tasks(self) -> list[Task]:
-        """Devuelve todas las tareas ordenadas por ID."""
+        """Return all tasks sorted by ID."""
         return sorted(self.tasks, key=lambda task: task.id)
 
     def get_task(self, task_id: int) -> Task:
-        """Busca una tarea por su ID.
+        """Look up a task by its ID.
 
         Raises:
-            TaskNotFoundError: si no existe una tarea con ese ID.
+            TaskNotFoundError: if no task with that ID exists.
         """
         for task in self.tasks:
             if task.id == task_id:
@@ -138,14 +138,14 @@ class TaskManager:
         raise TaskNotFoundError(task_id)
 
     def complete_task(self, task_id: int) -> Task:
-        """Marca una tarea como completada y persiste el cambio."""
+        """Mark a task as completed and persist the change."""
         task = self.get_task(task_id)
         task.completed = True
         self.save()
         return task
 
     def delete_task(self, task_id: int) -> Task:
-        """Elimina una tarea y persiste el cambio."""
+        """Delete a task and persist the change."""
         task = self.get_task(task_id)
         self.tasks.remove(task)
         self.save()
