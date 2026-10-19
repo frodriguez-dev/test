@@ -1,9 +1,9 @@
 # Backend
 
-Django REST API backed by PostgreSQL. Django and the PostgreSQL connection are
-initialized; Django REST Framework and the API surface arrive with issue #17.
-This file defines the structure so code lands in a predictable place from the
-first commit.
+Django REST API backed by PostgreSQL. Django, the PostgreSQL connection, and
+Django REST Framework are initialized, and the first endpoint (`GET
+/api/health/`) is available. This file defines the structure so code lands in a
+predictable place from the first commit.
 
 ## Structure
 
@@ -14,10 +14,15 @@ backend/
 ├── uv.lock
 ├── config/
 │   ├── settings.py         # Single settings module, configured via environment
-│   ├── urls.py             # Root URL configuration and /api/v1/ routing
+│   ├── urls.py             # Root URL configuration; includes each app's URLs
 │   ├── asgi.py
 │   └── wsgi.py
 ├── apps/
+│   ├── core/               # Infrastructure endpoints (health check)
+│   │   ├── apps.py
+│   │   ├── views.py
+│   │   ├── urls.py
+│   │   └── tests/
 │   └── <domain>/           # One Django app per business domain
 │       ├── models.py
 │       ├── serializers.py
@@ -32,7 +37,8 @@ backend/
 
 Only create the modules that are actually needed. `services.py` and
 `selectors.py` are optional and should appear when logic stops fitting cleanly in
-a view or serializer. There are no business apps yet.
+a view or serializer. There are no business apps yet; `apps/core/` holds
+cross-cutting infrastructure endpoints.
 
 The root `pyproject.toml` is kept for now; the backend Python project lives under
 `backend/` and is managed with uv.
@@ -56,11 +62,13 @@ and a running PostgreSQL server.
    cp backend/.env.example backend/.env
    ```
 
-3. Install dependencies and apply the initial migrations.
+3. Install dependencies, run the configuration check, and apply the initial
+   migrations.
 
    ```sh
    cd backend
    uv sync
+   uv run --env-file .env manage.py check
    uv run --env-file .env manage.py migrate
    ```
 
@@ -72,14 +80,23 @@ and a running PostgreSQL server.
 
 `uv run --env-file .env` loads the variables for that command only. If you prefer
 a shell session, export the same variables yourself (for example with
-`set -a; source .env; set +a`). Without `DJANGO_SECRET_KEY` the settings module
-fails fast with an explicit error.
+`set -a; source .env; set +a`). When `DJANGO_DEBUG` is enabled and
+`DJANGO_SECRET_KEY` is unset, the settings module generates an ephemeral key and
+warns, so commands such as `manage.py check` run without a `.env`. With
+`DJANGO_DEBUG` disabled the key is required and the settings module fails fast
+with an explicit error.
+
+Run the backend tests (Django's test runner; they need no database):
+
+```sh
+uv run --env-file .env manage.py test
+```
 
 ### Environment variables
 
 | Variable | Purpose | Development default |
 | --- | --- | --- |
-| `DJANGO_SECRET_KEY` | Django cryptographic signing key | Required; placeholder in `.env.example` |
+| `DJANGO_SECRET_KEY` | Django cryptographic signing key | Required when `DJANGO_DEBUG=false`; ephemeral in development |
 | `DJANGO_DEBUG` | Enable debug mode | `false` |
 | `DJANGO_ALLOWED_HOSTS` | Comma-separated allowed hosts | `localhost,127.0.0.1` |
 | `POSTGRES_DB` | Database name | `app` |
@@ -92,12 +109,28 @@ The database variables match the official PostgreSQL image, so the future Docker
 Compose setup can reuse them without renaming. `.env` is ignored by Git; only
 `.env.example` is committed.
 
+## API
+
+Django REST Framework serves JSON only (see `REST_FRAMEWORK` in
+`config/settings.py`), so responses and errors have a predictable content type.
+
+| Method | Path | Response |
+| --- | --- | --- |
+| `GET` | `/api/health/` | `200` with `{"status": "ok"}` |
+
+`/api/health/` is an unversioned infrastructure endpoint for probes and startup
+checks. Business endpoints live under the versioned `/api/v1/` prefix
+(decision [0005](../docs/decisions.md)); the versioned surface is added with the
+first business domain.
+
 ## Ownership and boundaries
 
 - `config/` contains project wiring only: settings, URL composition, and ASGI/WSGI
   entry points. Business logic does not belong here.
 - `apps/<domain>/` owns its models, migrations, API surface, and tests. Name apps
   by domain (`accounts`, `billing`, `catalog`), not by technical layer.
+- `apps/core/` holds cross-cutting infrastructure endpoints only (for example the
+  health check); business rules never belong there.
 - Request flow: `urls → views → serializers/services → models`. Views stay thin;
   business rules live in services or model methods when they are shared.
 - Cross-app access goes through the other app's public Python API (imports from

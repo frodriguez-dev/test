@@ -9,9 +9,9 @@ It is a starting point for future decisions, not a final specification.
 ## Application architecture
 
 The repository is a monorepo with two deployable applications and shared
-documentation. The backend is initialized with Django and PostgreSQL (issue #19)
-and the frontend with React, TypeScript, Vite, and pnpm (issue #18); Django REST
-Framework and the API surface are pending (issue #17). Their structure is defined
+documentation. The backend is initialized with Django, Django REST Framework, and
+PostgreSQL (issues #19 and #17) and the frontend with React, TypeScript, Vite,
+and pnpm (issue #18). Their structure is defined
 in [`frontend/README.md`](../../frontend/README.md) and
 [`backend/README.md`](../../backend/README.md).
 
