@@ -3,13 +3,28 @@
 This repository is a clean, provider-independent foundation for **software
 development assisted by AI agents**. It provides shared instructions, a skills
 system, and architecture documentation that humans and agents can both follow
-and build on.
+and build on. It is also the monorepo for the React and Django applications
+described below.
+
+## Planned stack
+
+The applications are defined but not initialized yet. Issue #16 established the
+structure; issues #17 and #18 add the toolchains.
+
+| Layer | Stack | Location |
+| --- | --- | --- |
+| Frontend | React, TypeScript, Vite, pnpm | `frontend/` |
+| Backend | Django, Django REST Framework, uv | `backend/` |
+| Database | PostgreSQL | Accessed by the backend only |
+| API | REST/JSON under `/api/v1/` | `backend/` |
 
 ## Purpose
 
 - Establish a clear, minimal base for AI-assisted development.
 - Keep instructions, skills, and tooling consistent and free of duplication.
 - Stay independent of any specific agent, model, or vendor.
+- Keep frontend, backend, and documentation in one repository with explicit
+  boundaries.
 
 ## Repository layout
 
@@ -19,11 +34,17 @@ and build on.
 ├── README.md            # This file
 ├── THIRD_PARTY_NOTICES.md  # Licenses for vendored skills
 ├── skills-lock.json     # Agent Skills installer lock file
+├── pyproject.toml       # Provisional root Python metadata (moves to backend/)
 ├── .agents/
 │   └── skills/          # Installed skills, template, and catalog
 ├── .claude/
 │   └── skills/          # Relative links to the canonical skills
+├── backend/             # Django REST API (not initialized yet)
+│   └── README.md        # Intended backend structure and boundaries
+├── frontend/            # React SPA (not initialized yet)
+│   └── README.md        # Intended frontend structure and boundaries
 └── docs/
+    ├── decisions.md     # Fundamental architecture decisions
     └── ai/              # Architecture, conventions, tooling, and skills notes
 ```
 
@@ -32,20 +53,22 @@ and build on.
 Read the foundation in this order:
 
 1. [`AGENTS.md`](AGENTS.md) — how agents should work in this repository.
-2. [`docs/ai/architecture.md`](docs/ai/architecture.md) — how instructions,
-   skills, and tools fit together.
-3. [`docs/ai/conventions.md`](docs/ai/conventions.md) — coding and repository
-   conventions.
-4. [`docs/ai/tooling.md`](docs/ai/tooling.md) — tools that are used, proposed,
+2. [`docs/ai/architecture.md`](docs/ai/architecture.md) — how the application
+   layers and the AI foundation fit together.
+3. [`docs/decisions.md`](docs/decisions.md) — why the stack and boundaries were
+   chosen.
+4. [`docs/ai/conventions.md`](docs/ai/conventions.md) — coding, repository, and
+   dependency conventions.
+5. [`docs/ai/tooling.md`](docs/ai/tooling.md) — tools that are used, proposed,
    or still being evaluated.
-5. [`docs/ai/skills.md`](docs/ai/skills.md) — installed Agent Skills,
+6. [`docs/ai/skills.md`](docs/ai/skills.md) — installed Agent Skills,
    provenance, and maintenance.
-6. [`.agents/skills/`](.agents/skills/README.md) — reusable agent skills.
+7. [`.agents/skills/`](.agents/skills/README.md) — reusable agent skills.
 
 ## Status
 
-This is an early foundation. It intentionally contains no application code,
-tests, or orchestration yet. Unresolved choices are tracked as *PENDING* in the
-`docs/ai/` documents rather than assumed. A first set of professional Agent
-Skills is installed and versioned in the repository; see
+This is an early foundation. The monorepo structure is defined, but it
+intentionally contains no application code or tests yet. Unresolved choices are
+tracked as *PENDING* in the `docs/ai/` documents rather than assumed. A first set
+of professional Agent Skills is installed and versioned in the repository; see
 [`docs/ai/skills.md`](docs/ai/skills.md).

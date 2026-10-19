@@ -145,7 +145,8 @@ install a skill automatically as a side effect of another skill.
 ## Deferred and rejected skills
 
 Stack-specific skills were evaluated against the current repository, which has
-no application code, frontend, or end-to-end test suite:
+no initialized application code, frontend implementation, or end-to-end test
+suite:
 
 | Skill | Decision | Reason |
 | --- | --- | --- |

@@ -1,9 +1,67 @@
-# AI development architecture
+# Repository and AI development architecture
 
-This document describes how the pieces of the AI-assisted development
-foundation relate to each other, and the principles that keep them consistent.
+This document describes the application architecture of the monorepo and how
+the pieces of the AI-assisted development foundation relate to each other, along
+with the principles that keep them consistent.
 
 It is a starting point for future decisions, not a final specification.
+
+## Application architecture
+
+The repository is a monorepo with two deployable applications and shared
+documentation. The applications are not initialized yet; their intended
+structure is defined in [`frontend/README.md`](../../frontend/README.md) and
+[`backend/README.md`](../../backend/README.md).
+
+| Layer | Location | Responsibility | Depends on |
+| --- | --- | --- | --- |
+| Frontend | `frontend/` | React/TypeScript single-page application: routing, UI, client-side state, and HTTP access to the API. | Backend REST API only |
+| Backend | `backend/` | Django/DRF application: request handling, validation, business rules, persistence, and the versioned JSON API. | PostgreSQL |
+| Data | PostgreSQL | Durable relational storage and constraints. | — |
+| Documentation and AI guidance | `docs/`, `AGENTS.md`, `.agents/skills/` | Architecture, decisions, conventions, instructions, and task procedures. | — |
+
+```
+Browser
+  │
+  ▼
+frontend/  (React + TypeScript, Vite dev server)
+  │  HTTP JSON, /api/v1/
+  ▼
+backend/   (Django + Django REST Framework)
+  │  Django ORM and migrations
+  ▼
+PostgreSQL
+```
+
+### Responsibilities of each layer
+
+- **Frontend.** Owns presentation, navigation, forms, and client state. It calls
+  the backend through `src/api/` and must not contain business rules that the
+  backend also enforces. Build-time configuration is limited to public values.
+- **Backend.** Owns the domain model, validation, authorization, business rules,
+  and data access. Views translate HTTP to application calls; serializers
+  validate and shape data; services hold multi-step workflows; models and
+  migrations define persistence.
+- **PostgreSQL.** Owns durable state, relational integrity, and transactional
+  guarantees. Only the backend connects to it.
+- **Documentation and AI guidance.** Owns the rules for humans and agents. It
+  describes the system but must not duplicate code or configuration.
+
+### Dependency rules
+
+- Dependencies point from the UI toward storage: `frontend → backend → database`.
+  Nothing points back.
+- The frontend and backend share no runtime code or filesystem state. Their
+  contract is the versioned REST API.
+- Within the frontend, `pages → features → components/lib → types`; shared code
+  never imports pages or features.
+- Within the backend, `urls → views → serializers/services → models`; apps do not
+  query another app's tables directly.
+- Prefer plain functions and Django/React primitives. Add an abstraction only
+  when it removes real duplication or isolates a real boundary.
+
+The rationale for these choices is recorded in
+[`docs/decisions.md`](../decisions.md).
 
 ## Building blocks
 
@@ -23,6 +81,10 @@ Supporting documentation lives in `docs/ai/`:
 - `skills.md` — installed Agent Skills, provenance, and maintenance.
 - `tooling.md` — catalog of tools by status (in use, proposed, pending
   evaluation).
+
+Fundamental architecture decisions are recorded in
+[`docs/decisions.md`](../decisions.md). Application layout is documented in
+`frontend/README.md` and `backend/README.md`.
 
 ## Responsibilities of `AGENTS.md`
 

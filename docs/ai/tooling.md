@@ -12,6 +12,21 @@ The catalog records candidates and decisions; adoption happens in later tasks.
 - **Proposed** — recommended for adoption; not yet installed or configured.
 - **Pending evaluation** — candidate that needs a decision before adoption.
 
+## Application stack
+
+The stack is decided in [`docs/decisions.md`](../decisions.md) but is **not
+installed** yet. Issues #17 and #18 initialize it.
+
+| Tool | Status | Notes |
+| --- | --- | --- |
+| React + TypeScript | Proposed | Frontend UI and language; initialized in issue #18. |
+| Vite | Proposed | Frontend build and dev server; proxies `/api` during development. |
+| pnpm | Proposed | Frontend package manager; `frontend/pnpm-lock.yaml` is committed. |
+| Django | Proposed | Backend web framework; initialized in issue #17. |
+| Django REST Framework | Proposed | JSON API under `/api/v1/`. |
+| PostgreSQL | Proposed | Only database, in every environment including local development. |
+| uv | Proposed | Backend dependency and environment management; `backend/uv.lock` is committed. |
+
 ## Agents and coding assistants
 
 | Tool | Status | Notes |
@@ -52,15 +67,16 @@ The catalog records candidates and decisions; adoption happens in later tasks.
 
 | Tool | Status | Notes |
 | --- | --- | --- |
-| Test framework | Pending evaluation | None configured yet. Selecting one (`pytest` or `unittest`) is **PENDING**. |
+| Test framework | Pending evaluation | None configured yet. Intended split: Vitest + React Testing Library for the frontend and `pytest-django` (or Django's runner) for the backend. |
 | Coverage measurement | Pending evaluation | Not configured. |
 
 ## Static analysis and code quality
 
 | Tool | Status | Notes |
 | --- | --- | --- |
-| Linter / formatter | Proposed | Ruff is a candidate; not yet adopted. |
-| Type checker | Proposed | Mypy is a candidate; not yet adopted. |
+| Ruff | Proposed | Python linter and formatter for `backend/`; not yet adopted. |
+| Mypy | Proposed | Python type checker for `backend/`; not yet adopted. |
+| ESLint + Prettier | Proposed | Frontend linting and formatting; chosen when issue #18 initializes the project. |
 | Pre-commit hooks | Pending evaluation | Would wire linters to Git; decided after linters. |
 
 ## Security and permissions

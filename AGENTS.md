@@ -8,19 +8,25 @@ belong in skills (`.agents/skills/`); foundation notes belong in `docs/ai/`.
 
 ## Project context
 
-- **Purpose.** A provider-independent foundation for AI-assisted software
-  development: shared instructions, a skills system, and architecture notes. It
-  contains no application code, tests, or orchestration yet. See `README.md`.
-- **Stack.** Python 3.10+ (see `pyproject.toml`); standard library only unless a
-  dependency is justified. Documentation and skills are plain Markdown.
+- **Purpose.** A provider-independent monorepo for AI-assisted software
+  development: shared instructions, a skills system, architecture notes, and the
+  React/Django application. The applications are scaffolded but not initialized
+  yet. See `README.md`.
+- **Stack.** Frontend: React, TypeScript, Vite, and pnpm. Backend: Django,
+  Django REST Framework, PostgreSQL, and uv. Repository tooling: Python 3.10+
+  (see `pyproject.toml`); standard library only unless a dependency is
+  justified. Documentation and skills are plain Markdown.
 - **Layout.**
   - `AGENTS.md` — general rules that apply to every task (this file).
-  - `docs/ai/` — architecture, conventions, and tooling notes.
+  - `frontend/` — React single-page application; see `frontend/README.md`.
+  - `backend/` — Django REST API; see `backend/README.md`.
+  - `docs/` — architecture, decisions, conventions, and tooling notes.
   - `.agents/skills/` — reusable, task-specific skills.
-- **Tooling.** Nothing external is installed or configured yet; choices are
-  tracked as *PENDING* in `docs/ai/tooling.md`. Do not assume linters, test
-  frameworks, or MCP servers exist.
+- **Tooling.** The application toolchains are not installed yet; choices are
+  tracked as *PENDING* or *proposed* in `docs/ai/tooling.md`. Do not assume
+  linters, test frameworks, or MCP servers exist.
 - **Read on demand:** `docs/ai/architecture.md` for how the components relate,
+  `docs/decisions.md` for the rationale behind the stack and boundaries,
   `docs/ai/conventions.md` for coding and repository conventions, and
   `docs/ai/tooling.md` for available tools. Do not read everything before every
   change.
@@ -61,7 +67,8 @@ belong in skills (`.agents/skills/`); foundation notes belong in `docs/ai/`.
 - No test framework is configured yet (**PENDING**, see `docs/ai/tooling.md`).
   Do not claim a check passed unless you actually ran it.
 - When a framework exists, run the tests affected by your change first, then
-  widen validation if the impact justifies it.
+  widen validation if the impact justifies it. Frontend and backend test suites
+  are separate; run the one that covers the change.
 - Add or update tests alongside behavior changes; a behavior change without
   applicable tests is incomplete unless the limitation is documented.
 - Never hide errors, for example by weakening assertions, catching exceptions
