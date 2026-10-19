@@ -20,16 +20,58 @@ apply on top of the general rules in [`AGENTS.md`](../../AGENTS.md).
 
 ## Repository layout
 
-- Instructions for agents live in `AGENTS.md`.
-- Foundation documentation lives under `docs/ai/`.
-- Reusable agent skills live under `.agents/skills/<name>/`.
+- Application code lives in `frontend/` and `backend/`; each application owns its
+  manifest, lock file, and tests.
+- Shared documentation and architecture decisions live in `docs/`; agent
+  instructions live in `AGENTS.md`; reusable agent skills live under
+  `.agents/skills/<name>/`.
+- Structure and conventions for each application are documented in
+  [`frontend/README.md`](../../frontend/README.md) and
+  [`backend/README.md`](../../backend/README.md).
 
 Do not create empty directories or files without a documented purpose.
+
+## Code location and dependencies
+
+- Put code next to the concern it serves, not in generic `utils` or `misc`
+  modules. Extract shared code only after a second real use appears.
+- Keep dependency direction one-way: `frontend → backend → PostgreSQL`. The
+  frontend never imports backend files, and the backend never imports frontend
+  files.
+- Frontend: `src/api/` is the only HTTP boundary; `pages` compose `features`,
+  which compose shared `components` and `lib`.
+- Backend: one Django app per business domain under `backend/apps/`; keep
+  `config/` limited to project wiring.
+- Declare every dependency in the application's manifest (`frontend/package.json`
+  with pnpm, `backend/pyproject.toml` with uv) and commit its lock file. Do not
+  add a dependency without a stated reason or duplicate one already available.
+- Configuration comes from environment variables; commit `.env.example` files
+  only, never real secrets.
+
+## Frontend
+
+- Target TypeScript with strict mode and keep identifiers descriptive.
+- Name files by their primary export and colocate feature-specific components,
+  hooks, and tests with their feature.
+- Use pnpm; do not introduce a second Node package manager.
+- See [`frontend/README.md`](../../frontend/README.md) for the intended
+  structure.
+
+## Backend
+
+- Follow the Django conventions implied by the framework: thin views, explicit
+  URL routing, migrations committed with model changes, and tests under each
+  app's `tests/` directory.
+- Keep business rules out of `config/`; it is project wiring only.
+- Use PostgreSQL in every environment, including local development.
+- See [`backend/README.md`](../../backend/README.md) for the intended structure.
 
 ## Tests
 
 - No test framework is configured yet; selecting one is **PENDING** (see
-  [`docs/ai/tooling.md`](tooling.md)).
+  [`docs/ai/tooling.md`](tooling.md)). The intended split is a frontend test
+  runner with React Testing Library and a Django-aware runner such as
+  `pytest-django`.
 - Once a framework is adopted, every behavior change must keep the applicable
   test suites passing, and tests must be added or updated alongside behavior
   changes.
@@ -39,9 +81,10 @@ Do not create empty directories or files without a documented purpose.
 Do not commit generated or runtime files. The following are ignored via
 `.gitignore` and must stay untracked:
 
-- `__pycache__/` and `*.py[cod]`
-- `*.egg-info/`
-- `.pytest_cache/`
+- Python: `__pycache__/`, `*.py[cod]`, `*.egg-info/`, `.venv/`, `.pytest_cache/`
+- Node: `node_modules/`, `dist/`, `coverage/`
+- Environment and secrets: `.env`, `.env.*` (except `.env.example`)
+- Local runtime data: `backend/media/`, `backend/staticfiles/`
 
 ## Git workflow
 
