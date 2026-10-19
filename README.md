@@ -12,8 +12,9 @@ The backend is initialized with Django, Django REST Framework, PostgreSQL, and
 uv; the frontend is initialized with React, TypeScript, Vite, and pnpm. Issue #16
 established the structure, issue #18 added the frontend toolchain, issue #19
 initialized the backend, issue #17 added Django REST Framework and the first
-endpoint (`GET /api/health/`), and issue #21 added the Docker Compose
-development environment.
+endpoint (`GET /api/health/`), issue #21 added the Docker Compose
+development environment, and issue #22 added the generated OpenAPI contract and
+its documentation endpoints.
 
 | Layer | Stack | Location |
 | --- | --- | --- |
@@ -52,6 +53,8 @@ development environment.
 │   └── README.md        # Frontend structure, commands, and boundaries
 └── docs/
     ├── decisions.md     # Fundamental architecture decisions
+    ├── api/
+    │   └── openapi.yaml # Generated OpenAPI contract snapshot
     └── ai/              # Architecture, conventions, tooling, and skills notes
 ```
 
@@ -90,7 +93,7 @@ The services are available at:
 | Service | Address | Notes |
 | --- | --- | --- |
 | Frontend | <http://localhost:5173> | Vite dev server with hot module replacement. |
-| Backend | <http://localhost:8000> | Django dev server; `GET /api/health/` reports `{"status": "ok"}`. |
+| Backend | <http://localhost:8000> | Django dev server; `GET /api/health/` reports `{"status": "ok"}`. API docs at `/api/docs/`, schema at `/api/schema/`. |
 | Database | `db:5432` | PostgreSQL, reachable only from the other Compose services. |
 
 Source directories are bind-mounted, so frontend and backend reload on change.
@@ -112,8 +115,9 @@ For the non-Docker setup, see [`backend/README.md`](backend/README.md) and
 This is an early foundation. The monorepo structure is defined and the backend
 (Django, Django REST Framework, and PostgreSQL) and frontend (React, TypeScript,
 Vite, and pnpm) toolchains are initialized. The backend exposes the
-infrastructure endpoint `GET /api/health/` and has tests for it; there are no
-business models or business endpoints yet. `docker compose up --build` starts
+infrastructure endpoint `GET /api/health/`, the generated OpenAPI contract at
+`/api/schema/` and `/api/docs/`, and has tests for them; there are no business
+models or business endpoints yet. `docker compose up --build` starts
 the complete development stack. Unresolved choices are tracked as
 *PENDING* in the `docs/ai/` documents rather than assumed. A first set of
 professional Agent Skills is installed and versioned in the repository; see

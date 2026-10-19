@@ -55,7 +55,8 @@ PostgreSQL
 - Dependencies point from the UI toward storage: `frontend → backend → database`.
   Nothing points back.
 - The frontend and backend share no runtime code or filesystem state. Their
-  contract is the versioned REST API.
+  contract is the versioned REST API, whose OpenAPI schema is generated from the
+  backend and committed at `docs/api/openapi.yaml`.
 - Within the frontend, `pages → features → components/lib → types`; shared code
   never imports pages or features.
 - Within the backend, `urls → views → serializers/services → models`; apps do not
