@@ -37,7 +37,7 @@ runtime code between them.
 
 ## 0002 — React, TypeScript, Vite, and pnpm for the frontend
 
-- **Status:** Accepted, not yet initialized (issue #18)
+- **Status:** Accepted, initialized in issue #18
 - **Date:** 2026-10-19
 - **Issue:** #16
 
@@ -53,7 +53,8 @@ and managing dependencies with pnpm. Strict TypeScript is enabled by default.
 - Server-side rendering is out of scope for now.
 - `package.json` and `pnpm-lock.yaml` live in `frontend/`; no Node tooling is
   required at the repository root.
-- Exact versions and scripts are chosen when issue #18 initializes the project.
+- Exact versions and scripts are recorded in `frontend/package.json`; `@/*` is
+  the import alias for `frontend/src/`.
 
 ## 0003 — Django, DRF, PostgreSQL, and uv for the backend
 

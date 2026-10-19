@@ -9,8 +9,9 @@ It is a starting point for future decisions, not a final specification.
 ## Application architecture
 
 The repository is a monorepo with two deployable applications and shared
-documentation. The applications are not initialized yet; their intended
-structure is defined in [`frontend/README.md`](../../frontend/README.md) and
+documentation. The frontend is initialized (issue #18); the backend is not yet
+initialized (issue #17). Their structure is defined in
+[`frontend/README.md`](../../frontend/README.md) and
 [`backend/README.md`](../../backend/README.md).
 
 | Layer | Location | Responsibility | Depends on |

@@ -14,14 +14,14 @@ The catalog records candidates and decisions; adoption happens in later tasks.
 
 ## Application stack
 
-The stack is decided in [`docs/decisions.md`](../decisions.md) but is **not
-installed** yet. Issues #17 and #18 initialize it.
+The stack is decided in [`docs/decisions.md`](../decisions.md). The frontend was
+initialized in issue #18; the backend is still pending in issue #17.
 
 | Tool | Status | Notes |
 | --- | --- | --- |
-| React + TypeScript | Proposed | Frontend UI and language; initialized in issue #18. |
-| Vite | Proposed | Frontend build and dev server; proxies `/api` during development. |
-| pnpm | Proposed | Frontend package manager; `frontend/pnpm-lock.yaml` is committed. |
+| React + TypeScript | In use | Frontend UI and language; initialized in issue #18. |
+| Vite | In use | Frontend build and dev server; proxies `/api` during development. |
+| pnpm | In use | Frontend package manager; `frontend/pnpm-lock.yaml` is committed. |
 | Django | Proposed | Backend web framework; initialized in issue #17. |
 | Django REST Framework | Proposed | JSON API under `/api/v1/`. |
 | PostgreSQL | Proposed | Only database, in every environment including local development. |
@@ -76,7 +76,7 @@ installed** yet. Issues #17 and #18 initialize it.
 | --- | --- | --- |
 | Ruff | Proposed | Python linter and formatter for `backend/`; not yet adopted. |
 | Mypy | Proposed | Python type checker for `backend/`; not yet adopted. |
-| ESLint + Prettier | Proposed | Frontend linting and formatting; chosen when issue #18 initializes the project. |
+| ESLint + Prettier | Proposed | Frontend linting and formatting; not configured in issue #18, still proposed. |
 | Pre-commit hooks | Pending evaluation | Would wire linters to Git; decided after linters. |
 
 ## Security and permissions

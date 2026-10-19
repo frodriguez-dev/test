@@ -8,8 +8,9 @@ described below.
 
 ## Planned stack
 
-The applications are defined but not initialized yet. Issue #16 established the
-structure; issues #17 and #18 add the toolchains.
+The frontend is initialized; the backend is defined but not initialized yet.
+Issue #16 established the structure, issue #18 added the frontend toolchain, and
+issue #17 adds the backend.
 
 | Layer | Stack | Location |
 | --- | --- | --- |
@@ -41,8 +42,8 @@ structure; issues #17 and #18 add the toolchains.
 │   └── skills/          # Relative links to the canonical skills
 ├── backend/             # Django REST API (not initialized yet)
 │   └── README.md        # Intended backend structure and boundaries
-├── frontend/            # React SPA (not initialized yet)
-│   └── README.md        # Intended frontend structure and boundaries
+├── frontend/            # React SPA (initialized: React, TypeScript, Vite, pnpm)
+│   └── README.md        # Frontend structure, commands, and boundaries
 └── docs/
     ├── decisions.md     # Fundamental architecture decisions
     └── ai/              # Architecture, conventions, tooling, and skills notes
@@ -67,8 +68,8 @@ Read the foundation in this order:
 
 ## Status
 
-This is an early foundation. The monorepo structure is defined, but it
-intentionally contains no application code or tests yet. Unresolved choices are
-tracked as *PENDING* in the `docs/ai/` documents rather than assumed. A first set
-of professional Agent Skills is installed and versioned in the repository; see
-[`docs/ai/skills.md`](docs/ai/skills.md).
+This is an early foundation. The monorepo structure is defined and the frontend
+toolchain is initialized; the backend and the test frameworks are not yet set up.
+Unresolved choices are tracked as *PENDING* in the `docs/ai/` documents rather
+than assumed. A first set of professional Agent Skills is installed and versioned
+in the repository; see [`docs/ai/skills.md`](docs/ai/skills.md).
