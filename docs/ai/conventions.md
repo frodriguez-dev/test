@@ -67,3 +67,7 @@ Do not commit generated or runtime files. The following are ignored via
   [`.agents/skills/README.md`](../../.agents/skills/README.md).
 - Start from `.agents/skills/_template/SKILL.md`.
 - Keep skills focused; split them when they cover unrelated concerns.
+- Treat third-party skills as untrusted until reviewed. Record provenance,
+  license, and validation status in [`docs/ai/skills.md`](skills.md).
+- Keep installed skills project-scoped and commit the skill files, relative
+  `.claude/skills` links, and `skills-lock.json` together.
