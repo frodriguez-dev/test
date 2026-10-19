@@ -17,6 +17,16 @@ pnpm build      # type-check and build for production
 pnpm preview    # serve the production build locally
 ```
 
+### Docker Compose
+
+From the repository root, `docker compose up --build` starts the frontend with
+the backend and PostgreSQL. The source directory is bind-mounted and Vite serves
+the app on <http://localhost:5173> with hot module replacement; dependencies
+stay in a named volume so the container does not depend on a host
+`node_modules/`. See the root
+[`README.md`](../README.md#local-development-with-docker-compose) for the full
+workflow.
+
 ## Structure
 
 ```

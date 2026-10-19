@@ -11,8 +11,9 @@ described below.
 The backend is initialized with Django, Django REST Framework, PostgreSQL, and
 uv; the frontend is initialized with React, TypeScript, Vite, and pnpm. Issue #16
 established the structure, issue #18 added the frontend toolchain, issue #19
-initialized the backend, and issue #17 added Django REST Framework and the first
-endpoint (`GET /api/health/`).
+initialized the backend, issue #17 added Django REST Framework and the first
+endpoint (`GET /api/health/`), and issue #21 added the Docker Compose
+development environment.
 
 | Layer | Stack | Location |
 | --- | --- | --- |
@@ -37,14 +38,17 @@ endpoint (`GET /api/health/`).
 ├── README.md            # This file
 ├── THIRD_PARTY_NOTICES.md  # Licenses for vendored skills
 ├── skills-lock.json     # Agent Skills installer lock file
+├── compose.yaml         # Development environment: frontend, backend, and db
 ├── pyproject.toml       # Provisional root Python metadata (moves to backend/)
 ├── .agents/
 │   └── skills/          # Installed skills, template, and catalog
 ├── .claude/
 │   └── skills/          # Relative links to the canonical skills
 ├── backend/             # Django REST API (Django + DRF + PostgreSQL initialized)
+│   ├── Dockerfile       # Development image
 │   └── README.md        # Backend structure, setup, and boundaries
 ├── frontend/            # React SPA (initialized: React, TypeScript, Vite, pnpm)
+│   ├── Dockerfile       # Development image
 │   └── README.md        # Frontend structure, commands, and boundaries
 └── docs/
     ├── decisions.md     # Fundamental architecture decisions
@@ -68,13 +72,49 @@ Read the foundation in this order:
    provenance, and maintenance.
 7. [`.agents/skills/`](.agents/skills/README.md) — reusable agent skills.
 
+## Local development with Docker Compose
+
+Requires Docker Engine with the Compose plugin. The configuration targets local
+development only; it is not a production deployment.
+
+```sh
+docker compose up --build        # build images and start db, backend, frontend
+docker compose up -d --build     # same, in the background
+docker compose logs -f           # follow service logs
+docker compose down              # stop the services, keep database data
+docker compose down -v           # stop the services and delete database data
+```
+
+The services are available at:
+
+| Service | Address | Notes |
+| --- | --- | --- |
+| Frontend | <http://localhost:5173> | Vite dev server with hot module replacement. |
+| Backend | <http://localhost:8000> | Django dev server; `GET /api/health/` reports `{"status": "ok"}`. |
+| Database | `db:5432` | PostgreSQL, reachable only from the other Compose services. |
+
+Source directories are bind-mounted, so frontend and backend reload on change.
+The backend applies migrations on startup and waits for the PostgreSQL
+healthcheck before starting. PostgreSQL data lives in the named volume
+`postgres_data`; `docker compose down` keeps it and `docker compose down -v`
+removes it.
+
+The credentials in `compose.yaml` are non-secret development defaults. Override
+them with shell environment variables or a local root `.env` file (for example
+`POSTGRES_PASSWORD`, `DJANGO_SECRET_KEY`, `BACKEND_PORT`, or `FRONTEND_PORT`).
+Never commit real credentials. The `.env` file is ignored by Git.
+
+For the non-Docker setup, see [`backend/README.md`](backend/README.md) and
+[`frontend/README.md`](frontend/README.md).
+
 ## Status
 
 This is an early foundation. The monorepo structure is defined and the backend
 (Django, Django REST Framework, and PostgreSQL) and frontend (React, TypeScript,
 Vite, and pnpm) toolchains are initialized. The backend exposes the
 infrastructure endpoint `GET /api/health/` and has tests for it; there are no
-business models or business endpoints yet. Unresolved choices are tracked as
+business models or business endpoints yet. `docker compose up --build` starts
+the complete development stack. Unresolved choices are tracked as
 *PENDING* in the `docs/ai/` documents rather than assumed. A first set of
 professional Agent Skills is installed and versioned in the repository; see
 [`docs/ai/skills.md`](docs/ai/skills.md).
