@@ -1,11 +1,11 @@
 # Backend
 
-Django REST API backed by PostgreSQL. It is **not initialized yet**; issue #17
-will add the toolchain (Django, Django REST Framework, PostgreSQL driver, and
-uv). This file defines the intended structure so code lands in a predictable
-place from the first commit.
+Django REST API backed by PostgreSQL. Django and the PostgreSQL connection are
+initialized; Django REST Framework and the API surface arrive with issue #17.
+This file defines the structure so code lands in a predictable place from the
+first commit.
 
-## Intended structure
+## Structure
 
 ```
 backend/
@@ -32,10 +32,65 @@ backend/
 
 Only create the modules that are actually needed. `services.py` and
 `selectors.py` are optional and should appear when logic stops fitting cleanly in
-a view or serializer.
+a view or serializer. There are no business apps yet.
 
-The root `pyproject.toml` is kept for now; the backend Python project will live
-under `backend/` once issue #17 initializes it.
+The root `pyproject.toml` is kept for now; the backend Python project lives under
+`backend/` and is managed with uv.
+
+## Local setup
+
+Requirements: Python 3.10+ (uv can install it), [uv](https://docs.astral.sh/uv/),
+and a running PostgreSQL server.
+
+1. Create the local role and database. The credentials are examples; use your
+   own values and keep them out of Git.
+
+   ```sql
+   CREATE ROLE app LOGIN PASSWORD 'change-me-in-development';
+   CREATE DATABASE app OWNER app;
+   ```
+
+2. Create the environment file and adjust it if your credentials differ.
+
+   ```sh
+   cp backend/.env.example backend/.env
+   ```
+
+3. Install dependencies and apply the initial migrations.
+
+   ```sh
+   cd backend
+   uv sync
+   uv run --env-file .env manage.py migrate
+   ```
+
+4. Start the development server.
+
+   ```sh
+   uv run --env-file .env manage.py runserver
+   ```
+
+`uv run --env-file .env` loads the variables for that command only. If you prefer
+a shell session, export the same variables yourself (for example with
+`set -a; source .env; set +a`). Without `DJANGO_SECRET_KEY` the settings module
+fails fast with an explicit error.
+
+### Environment variables
+
+| Variable | Purpose | Development default |
+| --- | --- | --- |
+| `DJANGO_SECRET_KEY` | Django cryptographic signing key | Required; placeholder in `.env.example` |
+| `DJANGO_DEBUG` | Enable debug mode | `false` |
+| `DJANGO_ALLOWED_HOSTS` | Comma-separated allowed hosts | `localhost,127.0.0.1` |
+| `POSTGRES_DB` | Database name | `app` |
+| `POSTGRES_USER` | Database user | `app` |
+| `POSTGRES_PASSWORD` | Database password | Empty |
+| `POSTGRES_HOST` | Database host | `localhost` |
+| `POSTGRES_PORT` | Database port | `5432` |
+
+The database variables match the official PostgreSQL image, so the future Docker
+Compose setup can reuse them without renaming. `.env` is ignored by Git; only
+`.env.example` is committed.
 
 ## Ownership and boundaries
 

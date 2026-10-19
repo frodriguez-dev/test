@@ -14,18 +14,20 @@ The catalog records candidates and decisions; adoption happens in later tasks.
 
 ## Application stack
 
-The stack is decided in [`docs/decisions.md`](../decisions.md) but is **not
-installed** yet. Issues #17 and #18 initialize it.
+The stack is decided in [`docs/decisions.md`](../decisions.md) and partially
+installed. Django, PostgreSQL, and uv are initialized in the backend (issue #19);
+Django REST Framework (issue #17) and the frontend toolchain (issue #18) are
+still pending.
 
 | Tool | Status | Notes |
 | --- | --- | --- |
 | React + TypeScript | Proposed | Frontend UI and language; initialized in issue #18. |
 | Vite | Proposed | Frontend build and dev server; proxies `/api` during development. |
 | pnpm | Proposed | Frontend package manager; `frontend/pnpm-lock.yaml` is committed. |
-| Django | Proposed | Backend web framework; initialized in issue #17. |
-| Django REST Framework | Proposed | JSON API under `/api/v1/`. |
-| PostgreSQL | Proposed | Only database, in every environment including local development. |
-| uv | Proposed | Backend dependency and environment management; `backend/uv.lock` is committed. |
+| Django | In use | Backend web framework; project lives under `backend/`. |
+| Django REST Framework | Proposed | JSON API under `/api/v1/`; added in issue #17. |
+| PostgreSQL | In use | Only database, in every environment including local development. |
+| uv | In use | Backend dependency and environment management; `backend/uv.lock` is committed. |
 
 ## Agents and coding assistants
 
