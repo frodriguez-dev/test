@@ -14,11 +14,11 @@ The catalog records candidates and decisions; adoption happens in later tasks.
 
 ## Application stack
 
-The stack is decided in [`docs/decisions.md`](../decisions.md) and partially
-installed. Django, PostgreSQL, and uv are initialized in the backend (issue #19),
-and React, TypeScript, Vite, and pnpm are initialized in the frontend (issue
-#18). Tailwind CSS and shadcn/ui provide the frontend visual system (issue #20).
-Django REST Framework and the API surface (issue #17) are still pending.
+The stack is decided in [`docs/decisions.md`](../decisions.md). Django, Django
+REST Framework, PostgreSQL, and uv are initialized in the backend (issues #19
+and #17), and React, TypeScript, Vite, and pnpm are initialized in the frontend
+(issue #18). Tailwind CSS and shadcn/ui provide the frontend visual system
+(issue #20).
 
 | Tool | Status | Notes |
 | --- | --- | --- |
@@ -28,7 +28,7 @@ Django REST Framework and the API surface (issue #17) are still pending.
 | Tailwind CSS | In use | Frontend styling through the `@tailwindcss/vite` plugin; configured in issue #20. |
 | shadcn/ui | In use | Frontend component source managed by its CLI; `frontend/components.json` is committed. |
 | Django | In use | Backend web framework; project lives under `backend/`. |
-| Django REST Framework | Proposed | JSON API under `/api/v1/`; added in issue #17. |
+| Django REST Framework | In use | JSON API under `/api/v1/`; initialized in issue #17 (JSON renderer only). |
 | PostgreSQL | In use | Only database, in every environment including local development. |
 | uv | In use | Backend dependency and environment management; `backend/uv.lock` is committed. |
 
@@ -72,7 +72,8 @@ Django REST Framework and the API surface (issue #17) are still pending.
 
 | Tool | Status | Notes |
 | --- | --- | --- |
-| Test framework | Pending evaluation | None configured yet. Intended split: Vitest + React Testing Library for the frontend and `pytest-django` (or Django's runner) for the backend. |
+| Backend test runner | In use | Django's built-in test runner via `manage.py test`; used in issue #17. |
+| Frontend test runner | Pending evaluation | Not configured. Candidate: Vitest + React Testing Library. |
 | Coverage measurement | Pending evaluation | Not configured. |
 
 ## Static analysis and code quality

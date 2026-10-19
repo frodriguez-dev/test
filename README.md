@@ -8,17 +8,18 @@ described below.
 
 ## Planned stack
 
-The backend is initialized with Django, PostgreSQL, and uv; the frontend is
-initialized with React, TypeScript, Vite, and pnpm. Issue #16 established the
-structure, issue #18 added the frontend toolchain, and issue #19 initialized the
-backend. Issue #17 adds Django REST Framework and the API surface.
+The backend is initialized with Django, Django REST Framework, PostgreSQL, and
+uv; the frontend is initialized with React, TypeScript, Vite, and pnpm. Issue #16
+established the structure, issue #18 added the frontend toolchain, issue #19
+initialized the backend, and issue #17 added Django REST Framework and the first
+endpoint (`GET /api/health/`).
 
 | Layer | Stack | Location |
 | --- | --- | --- |
 | Frontend | React, TypeScript, Vite, pnpm | `frontend/` |
 | Backend | Django, Django REST Framework, uv | `backend/` |
 | Database | PostgreSQL | Accessed by the backend only |
-| API | REST/JSON under `/api/v1/` | `backend/` |
+| API | REST/JSON under `/api/v1/` (plus `GET /api/health/`) | `backend/` |
 
 ## Purpose
 
@@ -41,7 +42,7 @@ backend. Issue #17 adds Django REST Framework and the API surface.
 │   └── skills/          # Installed skills, template, and catalog
 ├── .claude/
 │   └── skills/          # Relative links to the canonical skills
-├── backend/             # Django REST API (Django + PostgreSQL initialized)
+├── backend/             # Django REST API (Django + DRF + PostgreSQL initialized)
 │   └── README.md        # Backend structure, setup, and boundaries
 ├── frontend/            # React SPA (initialized: React, TypeScript, Vite, pnpm)
 │   └── README.md        # Frontend structure, commands, and boundaries
@@ -70,8 +71,10 @@ Read the foundation in this order:
 ## Status
 
 This is an early foundation. The monorepo structure is defined and the backend
-(Django and PostgreSQL) and frontend (React, TypeScript, Vite, and pnpm)
-toolchains are initialized. There are no business models, endpoints, or tests
-yet. Unresolved choices are tracked as *PENDING* in the `docs/ai/` documents
-rather than assumed. A first set of professional Agent Skills is installed and
-versioned in the repository; see [`docs/ai/skills.md`](docs/ai/skills.md).
+(Django, Django REST Framework, and PostgreSQL) and frontend (React, TypeScript,
+Vite, and pnpm) toolchains are initialized. The backend exposes the
+infrastructure endpoint `GET /api/health/` and has tests for it; there are no
+business models or business endpoints yet. Unresolved choices are tracked as
+*PENDING* in the `docs/ai/` documents rather than assumed. A first set of
+professional Agent Skills is installed and versioned in the repository; see
+[`docs/ai/skills.md`](docs/ai/skills.md).
