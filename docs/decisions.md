@@ -171,3 +171,27 @@ in `frontend/README.md` and `backend/README.md`.
 - Structural changes update the relevant document in the same change.
 - Documents link to each other instead of restating rules.
 - Unresolved choices are marked **PENDING** rather than assumed.
+
+## 0008 — Tailwind CSS and shadcn/ui as the visual system
+
+- **Status:** Accepted, initialized in issue #20
+- **Date:** 2026-10-19
+- **Issue:** #20
+
+**Context.** The frontend needs a styling approach and a component baseline that
+stays close to the platform and can evolve without a bespoke design system.
+
+**Decision.** Use Tailwind CSS v4 through the official Vite plugin for styling,
+and shadcn/ui components installed and updated with its official CLI. Component
+source lives under `src/components/ui/`, theme tokens in
+`src/styles/global.css`, and the CLI configuration in `frontend/components.json`.
+
+**Consequences.**
+
+- UI is built with utility classes and the generated shadcn/ui components.
+- shadcn/ui components and their primitives are vendored source, not a runtime
+  UI framework; they can be updated with the CLI.
+- A custom design system and additional UI libraries remain out of scope until a
+  later decision.
+- Adding or updating a component requires running the shadcn CLI and committing
+  the generated files together with `components.json`.

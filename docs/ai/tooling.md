@@ -17,13 +17,16 @@ The catalog records candidates and decisions; adoption happens in later tasks.
 The stack is decided in [`docs/decisions.md`](../decisions.md) and partially
 installed. Django, PostgreSQL, and uv are initialized in the backend (issue #19),
 and React, TypeScript, Vite, and pnpm are initialized in the frontend (issue
-#18). Django REST Framework and the API surface (issue #17) are still pending.
+#18). Tailwind CSS and shadcn/ui provide the frontend visual system (issue #20).
+Django REST Framework and the API surface (issue #17) are still pending.
 
 | Tool | Status | Notes |
 | --- | --- | --- |
 | React + TypeScript | In use | Frontend UI and language; initialized in issue #18. |
 | Vite | In use | Frontend build and dev server; proxies `/api` during development. |
 | pnpm | In use | Frontend package manager; `frontend/pnpm-lock.yaml` is committed. |
+| Tailwind CSS | In use | Frontend styling through the `@tailwindcss/vite` plugin; configured in issue #20. |
+| shadcn/ui | In use | Frontend component source managed by its CLI; `frontend/components.json` is committed. |
 | Django | In use | Backend web framework; project lives under `backend/`. |
 | Django REST Framework | Proposed | JSON API under `/api/v1/`; added in issue #17. |
 | PostgreSQL | In use | Only database, in every environment including local development. |
