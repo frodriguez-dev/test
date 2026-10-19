@@ -92,6 +92,25 @@ Run the backend tests (Django's test runner; they need no database):
 uv run --env-file .env manage.py test
 ```
 
+### Docker Compose
+
+From the repository root, `docker compose up --build` starts PostgreSQL, the
+backend, and the frontend. The backend container runs migrations and then
+Django's autoreloading development server on port 8000; the source directory is
+bind-mounted so code changes reload automatically. Compose overrides
+`POSTGRES_HOST` with the `db` service name, so the non-Docker `localhost`
+default does not apply inside the container.
+
+Run commands and tests inside the container with:
+
+```sh
+docker compose exec backend uv run --no-sync manage.py check
+docker compose exec backend uv run --no-sync manage.py test
+```
+
+See the root [`README.md`](../README.md#local-development-with-docker-compose)
+for the full up, logs, and down workflow.
+
 ### Environment variables
 
 | Variable | Purpose | Development default |
@@ -105,8 +124,8 @@ uv run --env-file .env manage.py test
 | `POSTGRES_HOST` | Database host | `localhost` |
 | `POSTGRES_PORT` | Database port | `5432` |
 
-The database variables match the official PostgreSQL image, so the future Docker
-Compose setup can reuse them without renaming. `.env` is ignored by Git; only
+The database variables match the official PostgreSQL image, so the Docker
+Compose setup reuses them without renaming. `.env` is ignored by Git; only
 `.env.example` is committed.
 
 ## API

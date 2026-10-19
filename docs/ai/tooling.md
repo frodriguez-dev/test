@@ -31,6 +31,8 @@ and #17), and React, TypeScript, Vite, and pnpm are initialized in the frontend
 | Django REST Framework | In use | JSON API under `/api/v1/`; initialized in issue #17 (JSON renderer only). |
 | PostgreSQL | In use | Only database, in every environment including local development. |
 | uv | In use | Backend dependency and environment management; `backend/uv.lock` is committed. |
+| Docker | In use | Development images in `backend/Dockerfile` and `frontend/Dockerfile`. |
+| Docker Compose | In use | `compose.yaml` runs frontend, backend, and PostgreSQL together (issue #21). |
 
 ## Agents and coding assistants
 

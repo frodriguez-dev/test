@@ -11,8 +11,9 @@ It is a starting point for future decisions, not a final specification.
 The repository is a monorepo with two deployable applications and shared
 documentation. The backend is initialized with Django, Django REST Framework, and
 PostgreSQL (issues #19 and #17) and the frontend with React, TypeScript, Vite,
-and pnpm (issue #18). Their structure is defined
-in [`frontend/README.md`](../../frontend/README.md) and
+and pnpm (issue #18). Issue #21 adds `compose.yaml`, which runs the frontend,
+backend, and PostgreSQL together for local development. Their structure is
+defined in [`frontend/README.md`](../../frontend/README.md) and
 [`backend/README.md`](../../backend/README.md).
 
 | Layer | Location | Responsibility | Depends on |

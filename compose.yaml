@@ -1,0 +1,66 @@
+# Development environment for the frontend, backend, and PostgreSQL.
+#
+# Credentials below are non-secret development defaults. Override any of them
+# with shell environment variables or a local `.env` file; `.env` is ignored by
+# Git. This file is intentionally not a production deployment configuration.
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-in-development}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      # Variables are escaped so pg_isready reads them inside the container.
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      DJANGO_DEBUG: "true"
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-only-secret-key-change-me}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-in-development}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      # Bind mount for automatic reload; dependencies live in the image.
+      # The `z` flag relabels the mount for SELinux hosts such as Fedora.
+      - ./backend:/app:z
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+    environment:
+      # Poll for file changes so hot module replacement also works when the
+      # bind mount does not forward inotify events (for example Docker Desktop).
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    volumes:
+      # Bind mount for hot module replacement; keep image dependencies intact.
+      # The `z` flag relabels the mount for SELinux hosts such as Fedora.
+      - ./frontend:/app:z
+      - frontend_node_modules:/app/node_modules
+    depends_on:
+      backend:
+        condition: service_started
+
+volumes:
+  postgres_data:
+  frontend_node_modules:
