@@ -8,9 +8,10 @@ described below.
 
 ## Planned stack
 
-The frontend is defined but not initialized yet. Issue #16 established the
-structure; the backend toolchain is initialized (Django, PostgreSQL, and uv),
-and issue #17 adds Django REST Framework. Issue #18 adds the frontend toolchain.
+The backend is initialized with Django, PostgreSQL, and uv; the frontend is
+initialized with React, TypeScript, Vite, and pnpm. Issue #16 established the
+structure, issue #18 added the frontend toolchain, and issue #19 initialized the
+backend. Issue #17 adds Django REST Framework and the API surface.
 
 | Layer | Stack | Location |
 | --- | --- | --- |
@@ -42,8 +43,8 @@ and issue #17 adds Django REST Framework. Issue #18 adds the frontend toolchain.
 │   └── skills/          # Relative links to the canonical skills
 ├── backend/             # Django REST API (Django + PostgreSQL initialized)
 │   └── README.md        # Backend structure, setup, and boundaries
-├── frontend/            # React SPA (not initialized yet)
-│   └── README.md        # Intended frontend structure and boundaries
+├── frontend/            # React SPA (initialized: React, TypeScript, Vite, pnpm)
+│   └── README.md        # Frontend structure, commands, and boundaries
 └── docs/
     ├── decisions.md     # Fundamental architecture decisions
     └── ai/              # Architecture, conventions, tooling, and skills notes
@@ -69,7 +70,8 @@ Read the foundation in this order:
 ## Status
 
 This is an early foundation. The monorepo structure is defined and the backend
-is initialized with Django and PostgreSQL. There are no business models or
-endpoints yet. Unresolved choices are tracked as *PENDING* in the `docs/ai/`
-documents rather than assumed. A first set of professional Agent Skills is
-installed and versioned in the repository; see [`docs/ai/skills.md`](docs/ai/skills.md).
+(Django and PostgreSQL) and frontend (React, TypeScript, Vite, and pnpm)
+toolchains are initialized. There are no business models, endpoints, or tests
+yet. Unresolved choices are tracked as *PENDING* in the `docs/ai/` documents
+rather than assumed. A first set of professional Agent Skills is installed and
+versioned in the repository; see [`docs/ai/skills.md`](docs/ai/skills.md).

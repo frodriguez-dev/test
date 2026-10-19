@@ -10,8 +10,8 @@ belong in skills (`.agents/skills/`); foundation notes belong in `docs/ai/`.
 
 - **Purpose.** A provider-independent monorepo for AI-assisted software
   development: shared instructions, a skills system, architecture notes, and the
-  React/Django application. The backend runs on Django with PostgreSQL; the
-  frontend is scaffolded but not initialized yet. See `README.md`.
+  React/Django application. The backend (Django and PostgreSQL) and the frontend
+  (React, TypeScript, Vite, and pnpm) are initialized. See `README.md`.
 - **Stack.** Frontend: React, TypeScript, Vite, and pnpm. Backend: Django,
   Django REST Framework, PostgreSQL, and uv. Repository tooling: Python 3.10+
   (see `pyproject.toml`); standard library only unless a dependency is
@@ -22,10 +22,10 @@ belong in skills (`.agents/skills/`); foundation notes belong in `docs/ai/`.
   - `backend/` — Django REST API; see `backend/README.md`.
   - `docs/` — architecture, decisions, conventions, and tooling notes.
   - `.agents/skills/` — reusable, task-specific skills.
-- **Tooling.** The backend toolchain (Django, psycopg, and uv) is installed; the
-  frontend toolchain is not. Remaining choices are tracked as *PENDING* or
-  *proposed* in `docs/ai/tooling.md`. Do not assume linters, test frameworks, or
-  MCP servers exist.
+- **Tooling.** The backend (Django, psycopg, and uv) and frontend (React,
+  TypeScript, Vite, and pnpm) toolchains are installed. Remaining choices are
+  tracked as *PENDING* or *proposed* in `docs/ai/tooling.md`. Do not assume
+  linters, test frameworks, or MCP servers exist.
 - **Read on demand:** `docs/ai/architecture.md` for how the components relate,
   `docs/decisions.md` for the rationale behind the stack and boundaries,
   `docs/ai/conventions.md` for coding and repository conventions, and

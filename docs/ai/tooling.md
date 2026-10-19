@@ -15,15 +15,15 @@ The catalog records candidates and decisions; adoption happens in later tasks.
 ## Application stack
 
 The stack is decided in [`docs/decisions.md`](../decisions.md) and partially
-installed. Django, PostgreSQL, and uv are initialized in the backend (issue #19);
-Django REST Framework (issue #17) and the frontend toolchain (issue #18) are
-still pending.
+installed. Django, PostgreSQL, and uv are initialized in the backend (issue #19),
+and React, TypeScript, Vite, and pnpm are initialized in the frontend (issue
+#18). Django REST Framework and the API surface (issue #17) are still pending.
 
 | Tool | Status | Notes |
 | --- | --- | --- |
-| React + TypeScript | Proposed | Frontend UI and language; initialized in issue #18. |
-| Vite | Proposed | Frontend build and dev server; proxies `/api` during development. |
-| pnpm | Proposed | Frontend package manager; `frontend/pnpm-lock.yaml` is committed. |
+| React + TypeScript | In use | Frontend UI and language; initialized in issue #18. |
+| Vite | In use | Frontend build and dev server; proxies `/api` during development. |
+| pnpm | In use | Frontend package manager; `frontend/pnpm-lock.yaml` is committed. |
 | Django | In use | Backend web framework; project lives under `backend/`. |
 | Django REST Framework | Proposed | JSON API under `/api/v1/`; added in issue #17. |
 | PostgreSQL | In use | Only database, in every environment including local development. |
@@ -78,7 +78,7 @@ still pending.
 | --- | --- | --- |
 | Ruff | Proposed | Python linter and formatter for `backend/`; not yet adopted. |
 | Mypy | Proposed | Python type checker for `backend/`; not yet adopted. |
-| ESLint + Prettier | Proposed | Frontend linting and formatting; chosen when issue #18 initializes the project. |
+| ESLint + Prettier | Proposed | Frontend linting and formatting; not configured in issue #18, still proposed. |
 | Pre-commit hooks | Pending evaluation | Would wire linters to Git; decided after linters. |
 
 ## Security and permissions

@@ -1,10 +1,22 @@
 # Frontend
 
-React single-page application. It is **not initialized yet**; issue #18 will add
-the toolchain (React, TypeScript, Vite, and pnpm). This file defines the intended
-structure so code lands in a predictable place from the first commit.
+React single-page application, initialized with React, TypeScript, Vite, and
+pnpm in issue #18. This file defines the structure so code lands in a predictable
+place from the first commit.
 
-## Intended structure
+## Getting started
+
+Requires Node.js 20.19 or higher and pnpm.
+
+```bash
+cd frontend
+pnpm install
+pnpm dev        # start the Vite dev server
+pnpm build      # type-check and build for production
+pnpm preview    # serve the production build locally
+```
+
+## Structure
 
 ```
 frontend/
@@ -29,7 +41,17 @@ frontend/
 ```
 
 Only create the directories that are actually needed. The tree describes where
-code belongs, not a checklist of empty folders.
+code belongs, not a checklist of empty folders. The initial application only
+needs `src/pages/` (the first screen) and `src/styles/` (global styles).
+
+## Import alias
+
+`@/*` resolves to `src/*`, configured in both `tsconfig.app.json` (`paths`) and
+`vite.config.ts` (`resolve.alias`). Prefer the alias over long relative paths.
+
+```ts
+import { HomePage } from '@/pages/HomePage'
+```
 
 ## Ownership and boundaries
 
@@ -48,7 +70,7 @@ code belongs, not a checklist of empty folders.
 
 ## Conventions
 
-- TypeScript strict mode is expected; avoid `any` without a documented reason.
+- TypeScript runs in strict mode; avoid `any` without a documented reason.
 - Name files by their primary export (`UserCard.tsx`, `useCurrentUser.ts`).
 - Keep components small and colocate styles, tests, and hooks with their feature
   when they are not shared.
