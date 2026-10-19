@@ -58,7 +58,7 @@ and managing dependencies with pnpm. Strict TypeScript is enabled by default.
 
 ## 0003 — Django, DRF, PostgreSQL, and uv for the backend
 
-- **Status:** Accepted, partially initialized (Django and PostgreSQL in issue #19)
+- **Status:** Accepted, initialized (Django and PostgreSQL in issue #19; DRF and the API surface in issue #17)
 - **Date:** 2026-10-19
 - **Issue:** #16
 
@@ -72,9 +72,9 @@ the only database, and uv for dependency and environment management.
 
 - Domain state is modeled with Django apps and migrations.
 - The API is REST/JSON; GraphQL and a separate ORM layer are out of scope.
-- `pyproject.toml` and `uv.lock` will live in `backend/` once issue #17
-  initializes the project. The current root `pyproject.toml` is provisional and
-  is retained until then.
+- `pyproject.toml` and `uv.lock` live in `backend/` and are managed with uv. The
+  root `pyproject.toml` is provisional leftover metadata; renaming or removing it
+  is tracked as **PENDING** in [`docs/ai/architecture.md`](ai/architecture.md).
 - PostgreSQL-specific features are allowed when they simplify the data model,
   but local development must use PostgreSQL too, not SQLite.
 

@@ -68,13 +68,11 @@ Do not create empty directories or files without a documented purpose.
 
 ## Tests
 
-- No test framework is configured yet; selecting one is **PENDING** (see
-  [`docs/ai/tooling.md`](tooling.md)). The intended split is a frontend test
-  runner with React Testing Library and a Django-aware runner such as
-  `pytest-django`.
-- Once a framework is adopted, every behavior change must keep the applicable
-  test suites passing, and tests must be added or updated alongside behavior
-  changes.
+- The backend uses Django's built-in test runner; run it with
+  `uv run --env-file .env manage.py test`. No frontend test runner is configured
+  yet; selecting one is **PENDING** (see [`docs/ai/tooling.md`](tooling.md)).
+- Every behavior change must keep the applicable test suites passing, and tests
+  must be added or updated alongside behavior changes.
 
 ## Generated files
 

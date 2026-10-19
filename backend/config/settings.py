@@ -6,9 +6,11 @@ documented variables and safe defaults.
 """
 
 import os
+import warnings
 from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured
+from django.core.management.utils import get_random_secret_key
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -31,10 +33,23 @@ DEBUG = _env_bool("DJANGO_DEBUG", default=False)
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 if not SECRET_KEY:
-    raise ImproperlyConfigured(
-        "DJANGO_SECRET_KEY is required. Copy backend/.env.example to backend/.env "
-        "and set a value for local development."
-    )
+    if DEBUG:
+        # Development convenience: allow checks and the dev server to start
+        # without an explicit key. The key is random per process, so sessions
+        # do not survive a restart. Production (DEBUG disabled) still fails fast.
+        SECRET_KEY = get_random_secret_key()
+        warnings.warn(
+            "DJANGO_SECRET_KEY is not set; using an ephemeral key because "
+            "DJANGO_DEBUG is enabled. Set DJANGO_SECRET_KEY for stable sessions.",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+    else:
+        raise ImproperlyConfigured(
+            "DJANGO_SECRET_KEY is required. Copy backend/.env.example to "
+            "backend/.env and set a value, or enable DJANGO_DEBUG for local "
+            "development."
+        )
 
 ALLOWED_HOSTS = _env_list("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
 
@@ -45,6 +60,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # Third-party
+    "rest_framework",
+    # Local apps
+    "apps.core",
 ]
 
 MIDDLEWARE = [
@@ -112,3 +131,11 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# The API is consumed by the frontend over JSON; serve JSON only so every
+# response (including errors) has a predictable content type.
+REST_FRAMEWORK = {
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+    ],
+}
