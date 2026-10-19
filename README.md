@@ -8,9 +8,10 @@ described below.
 
 ## Planned stack
 
-The frontend is initialized; the backend is defined but not initialized yet.
-Issue #16 established the structure, issue #18 added the frontend toolchain, and
-issue #17 adds the backend.
+The backend is initialized with Django, PostgreSQL, and uv; the frontend is
+initialized with React, TypeScript, Vite, and pnpm. Issue #16 established the
+structure, issue #18 added the frontend toolchain, and issue #19 initialized the
+backend. Issue #17 adds Django REST Framework and the API surface.
 
 | Layer | Stack | Location |
 | --- | --- | --- |
@@ -40,8 +41,8 @@ issue #17 adds the backend.
 │   └── skills/          # Installed skills, template, and catalog
 ├── .claude/
 │   └── skills/          # Relative links to the canonical skills
-├── backend/             # Django REST API (not initialized yet)
-│   └── README.md        # Intended backend structure and boundaries
+├── backend/             # Django REST API (Django + PostgreSQL initialized)
+│   └── README.md        # Backend structure, setup, and boundaries
 ├── frontend/            # React SPA (initialized: React, TypeScript, Vite, pnpm)
 │   └── README.md        # Frontend structure, commands, and boundaries
 └── docs/
@@ -68,8 +69,9 @@ Read the foundation in this order:
 
 ## Status
 
-This is an early foundation. The monorepo structure is defined and the frontend
-toolchain is initialized; the backend and the test frameworks are not yet set up.
-Unresolved choices are tracked as *PENDING* in the `docs/ai/` documents rather
-than assumed. A first set of professional Agent Skills is installed and versioned
-in the repository; see [`docs/ai/skills.md`](docs/ai/skills.md).
+This is an early foundation. The monorepo structure is defined and the backend
+(Django and PostgreSQL) and frontend (React, TypeScript, Vite, and pnpm)
+toolchains are initialized. There are no business models, endpoints, or tests
+yet. Unresolved choices are tracked as *PENDING* in the `docs/ai/` documents
+rather than assumed. A first set of professional Agent Skills is installed and
+versioned in the repository; see [`docs/ai/skills.md`](docs/ai/skills.md).

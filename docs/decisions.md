@@ -58,7 +58,7 @@ and managing dependencies with pnpm. Strict TypeScript is enabled by default.
 
 ## 0003 — Django, DRF, PostgreSQL, and uv for the backend
 
-- **Status:** Accepted, not yet initialized (issue #17)
+- **Status:** Accepted, partially initialized (Django and PostgreSQL in issue #19)
 - **Date:** 2026-10-19
 - **Issue:** #16
 
