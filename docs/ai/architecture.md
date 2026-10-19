@@ -20,6 +20,7 @@ Supporting documentation lives in `docs/ai/`:
 
 - `architecture.md` — this file: how the components fit together.
 - `conventions.md` — shared coding and repository conventions.
+- `skills.md` — installed Agent Skills, provenance, and maintenance.
 - `tooling.md` — catalog of tools by status (in use, proposed, pending
   evaluation).
 
@@ -98,6 +99,7 @@ iterations:
 - **PENDING**: which linters, formatters, and type checkers to adopt (see
   `tooling.md`).
 - **PENDING**: which MCP servers, if any, to use and for which capabilities.
-- **PENDING**: how skills should be versioned and shared across repositories.
+- **PENDING**: whether skill updates should be automated with review gates; for
+  now they are manual (see [`skills.md`](skills.md)).
 - **PENDING**: the project identity (the `pyproject.toml` name still reflects an
   earlier temporary project and may need to be renamed or removed).

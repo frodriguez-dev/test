@@ -20,6 +20,11 @@ task; a skill applies only when its trigger conditions are met.
 The `_template/` directory is a starting point, not a skill; it is never meant
 to be applied directly.
 
+Installed third-party skills are listed, with provenance and maintenance
+instructions, in [`docs/ai/skills.md`](../../docs/ai/skills.md). Claude Code
+reads them through relative links in `.claude/skills/`; do not create copies
+there.
+
 ## Anatomy of a skill
 
 Each skill is a directory containing a `SKILL.md` file with:
@@ -38,9 +43,10 @@ split it.
 ## Discovering skills
 
 1. List the directories under `.agents/skills/` (ignoring `_template/` and
-   `README.md`).
+   `README.md`), or read the catalog in [`docs/ai/skills.md`](../../docs/ai/skills.md).
 2. Read the `description` in each `SKILL.md` front matter.
 3. Load the skill whose description matches the current task.
+4. Do not install a new skill without explicit authorization.
 
 Because this directory is plain Markdown, the same skills can be consumed by
 different agent tools. If a tool needs a different format, add a thin adapter

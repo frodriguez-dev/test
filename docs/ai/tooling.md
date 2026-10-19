@@ -17,7 +17,16 @@ The catalog records candidates and decisions; adoption happens in later tasks.
 | Tool | Status | Notes |
 | --- | --- | --- |
 | AI coding agents (provider-independent) | In use | Governed by [`AGENTS.md`](../../AGENTS.md); no single vendor is assumed. |
-| Additional coding agents | Pending evaluation | Which agents to standardize on is **PENDING**. |
+| Codex CLI | In use | Project skills discovery verified with `.agents/skills/`. |
+| OpenCode | In use | Project skills discovery verified with `.agents/skills/`. |
+| Claude Code | In use | Reads the same skills through relative links in `.claude/skills/`; discovery test pending authentication. |
+
+## Agent skills
+
+| Tool | Status | Notes |
+| --- | --- | --- |
+| `skills` CLI (`npx skills`) | In use | Version 1.7.2; project-scoped installs; lock file `skills-lock.json`. See [`skills.md`](skills.md). |
+| Installed Agent Skills | In use | Five third-party skills, vendored under `.agents/skills/`. |
 
 ## Orchestration and autonomous execution
 
