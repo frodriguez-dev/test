@@ -27,6 +27,76 @@ export class ApiError extends Error {
   }
 }
 
+/** Name of the cookie Django uses to store the CSRF secret. */
+const CSRF_COOKIE_NAME = 'csrftoken'
+
+/** HTTP methods that do not require a CSRF token. */
+const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS', 'TRACE'])
+
+/**
+ * Read a cookie value from `document.cookie`.
+ *
+ * @param name - Cookie name.
+ * @returns The decoded cookie value, or `null` when it is absent.
+ */
+function readCookie(name: string): string | null {
+  const prefix = `${name}=`
+
+  for (const entry of document.cookie.split(';')) {
+    const cookie = entry.trim()
+    if (cookie.startsWith(prefix)) {
+      return decodeURIComponent(cookie.slice(prefix.length))
+    }
+  }
+
+  return null
+}
+
+/**
+ * Return the CSRF token required by unsafe requests.
+ *
+ * Reads the token from Django's CSRF cookie and asks the backend to set it when
+ * it is missing. The cookie is re-read on every call because Django rotates the
+ * token when a session starts or ends.
+ *
+ * @returns The CSRF token.
+ * @throws {@link ApiError} When the token cannot be obtained.
+ */
+async function getCsrfToken(): Promise<string> {
+  const cookieToken = readCookie(CSRF_COOKIE_NAME)
+  if (cookieToken) {
+    return cookieToken
+  }
+
+  const response = await fetch('/api/v1/auth/csrf/', {
+    headers: { Accept: 'application/json' },
+    credentials: 'same-origin',
+  })
+  const body: unknown = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    throw new ApiError(
+      response.statusText || `Request failed with status ${response.status}`,
+      response.status,
+      body,
+    )
+  }
+
+  if (body && typeof body === 'object' && 'csrfToken' in body) {
+    const { csrfToken } = body
+    if (typeof csrfToken === 'string' && csrfToken.trim()) {
+      return csrfToken
+    }
+  }
+
+  const fallback = readCookie(CSRF_COOKIE_NAME)
+  if (fallback) {
+    return fallback
+  }
+
+  throw new ApiError('Unable to obtain a CSRF token.', response.status, body)
+}
+
 /**
  * Extract a human-readable message from an API error body.
  *
@@ -62,7 +132,8 @@ function getErrorMessage(body: unknown, fallback: string): string {
  * Perform a JSON request against the API and return the parsed response.
  *
  * Paths are relative so the Vite dev proxy and, in production, the same-origin
- * reverse proxy can route `/api` requests to Django.
+ * reverse proxy can route `/api` requests to Django. Unsafe requests include the
+ * `X-CSRFToken` header expected by Django's session authentication.
  *
  * @typeParam T - Expected shape of the parsed response body.
  * @param path - API path relative to the current origin.
@@ -74,12 +145,19 @@ export async function apiRequest<T>(
   path: string,
   init: RequestInit = {},
 ): Promise<T> {
+  const method = (init.method ?? 'GET').toUpperCase()
+  const headers = new Headers(init.headers)
+  headers.set('Accept', 'application/json')
+
+  if (!SAFE_METHODS.has(method)) {
+    headers.set('X-CSRFToken', await getCsrfToken())
+  }
+
   const response = await fetch(path, {
     ...init,
-    headers: {
-      Accept: 'application/json',
-      ...init.headers,
-    },
+    method,
+    headers,
+    credentials: 'same-origin',
   })
 
   if (!response.ok) {
