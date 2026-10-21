@@ -9,7 +9,10 @@ export type HealthState =
 
 /**
  * Load the backend health check and track its loading, success, and error
- * states. `reload` retries the request.
+ * states.
+ *
+ * @returns The current health state and a `reload` callback that retries the
+ * request.
  */
 export function useHealth() {
   const [state, setState] = useState<HealthState>({ status: 'loading' })

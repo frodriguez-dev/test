@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/card'
 import { HealthStatus } from '@/features/health/HealthStatus'
 
+/** Render the home page, including the backend health status. */
 export function HomePage() {
   return (
     <main className="flex min-h-svh items-center justify-center bg-muted/30 p-6">

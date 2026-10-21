@@ -2,6 +2,11 @@ import { CircleAlert, CircleCheck, LoaderCircle, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useHealth } from '@/features/health/useHealth'
 
+/**
+ * Render the backend health check with loading, success, and error states.
+ *
+ * The error state includes a retry button that repeats the request.
+ */
 export function HealthStatus() {
   const { state, reload } = useHealth()
 

@@ -7,9 +7,18 @@
 
 /** Error thrown when the API responds with a non-success status code. */
 export class ApiError extends Error {
+  /** HTTP status code returned by the API. */
   readonly status: number
+  /** Parsed response body, or `null` when it could not be parsed. */
   readonly body: unknown
 
+  /**
+   * Create an API error from the response status and body.
+   *
+   * @param message - Human-readable error message.
+   * @param status - HTTP status code returned by the API.
+   * @param body - Parsed response body, if available.
+   */
   constructor(message: string, status: number, body: unknown) {
     super(message)
     this.name = 'ApiError'
@@ -18,6 +27,16 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * Extract a human-readable message from an API error body.
+ *
+ * Supports the `detail` and `message` string fields used by Django REST
+ * Framework and falls back when neither is present.
+ *
+ * @param body - Parsed response body.
+ * @param fallback - Message to use when the body has no usable message.
+ * @returns The message from the body, or the fallback.
+ */
 function getErrorMessage(body: unknown, fallback: string): string {
   if (body && typeof body === 'object') {
     if (
@@ -44,6 +63,12 @@ function getErrorMessage(body: unknown, fallback: string): string {
  *
  * Paths are relative so the Vite dev proxy and, in production, the same-origin
  * reverse proxy can route `/api` requests to Django.
+ *
+ * @typeParam T - Expected shape of the parsed response body.
+ * @param path - API path relative to the current origin.
+ * @param init - Optional `fetch` options, such as method, body, or signal.
+ * @returns The parsed JSON response, or `undefined` for `204 No Content`.
+ * @throws {@link ApiError} When the API responds with a non-success status.
  */
 export async function apiRequest<T>(
   path: string,
