@@ -14,8 +14,9 @@ established the structure, issue #18 added the frontend toolchain, issue #19
 initialized the backend, issue #17 added Django REST Framework and the first
 endpoint (`GET /api/health/`), issue #21 added the Docker Compose
 development environment, issue #22 added the generated OpenAPI contract and
-its documentation endpoints, and issue #23 connected the frontend to the API
-with a typed HTTP client.
+its documentation endpoints, issue #23 connected the frontend to the API
+with a typed HTTP client, and issue #24 added session authentication with a
+login screen and protected routes.
 
 | Layer | Stack | Location |
 | --- | --- | --- |
@@ -117,11 +118,11 @@ This is an early foundation. The monorepo structure is defined and the backend
 (Django, Django REST Framework, and PostgreSQL) and frontend (React, TypeScript,
 Vite, and pnpm) toolchains are initialized. The backend exposes the
 infrastructure endpoint `GET /api/health/`, the generated OpenAPI contract at
-`/api/schema/` and `/api/docs/`, and has tests for them. The frontend calls the
-API through a centralized HTTP client with generated TypeScript types and shows
-the health check's loading, success, and error states; there are no business
-models or business endpoints yet. `docker compose up --build` starts the
-complete development stack. Unresolved choices are tracked as
-*PENDING* in the `docs/ai/` documents rather than assumed. A first set of
-professional Agent Skills is installed and versioned in the repository; see
-[`docs/ai/skills.md`](docs/ai/skills.md).
+`/api/schema/` and `/api/docs/`, and session authentication endpoints under
+`/api/v1/auth/`. The frontend calls the API through a centralized HTTP client
+with generated TypeScript types, shows the health check's loading, success, and
+error states, and protects an example route behind a login screen.
+`docker compose up --build` starts the complete development stack. Unresolved
+choices are tracked as *PENDING* in the `docs/ai/` documents rather than assumed.
+A first set of professional Agent Skills is installed and versioned in the
+repository; see [`docs/ai/skills.md`](docs/ai/skills.md).

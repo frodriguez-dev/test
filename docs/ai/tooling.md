@@ -23,6 +23,7 @@ and #17), and React, TypeScript, Vite, and pnpm are initialized in the frontend
 | Tool | Status | Notes |
 | --- | --- | --- |
 | React + TypeScript | In use | Frontend UI and language; initialized in issue #18. |
+| React Router | In use | Client-side routing and the protected-route guard (issue #24). |
 | Vite | In use | Frontend build and dev server; proxies `/api` during development. |
 | pnpm | In use | Frontend package manager; `frontend/pnpm-lock.yaml` is committed. |
 | Tailwind CSS | In use | Frontend styling through the `@tailwindcss/vite` plugin; configured in issue #20. |
