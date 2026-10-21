@@ -163,6 +163,11 @@ Validate the generated document without writing it:
 uv run --env-file .env manage.py spectacular --validate --file /dev/null
 ```
 
+The frontend generates its TypeScript API types from this snapshot with
+`pnpm generate:api` (see
+[`frontend/README.md`](../frontend/README.md#api-communication)). After changing
+the API surface, regenerate the contract here and then the frontend types.
+
 Tests fail when the committed snapshot differs from the code, and they validate
 both the generated and the committed documents. Describe endpoint parameters,
 request bodies, and responses with serializers and

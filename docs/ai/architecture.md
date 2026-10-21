@@ -56,7 +56,9 @@ PostgreSQL
   Nothing points back.
 - The frontend and backend share no runtime code or filesystem state. Their
   contract is the versioned REST API, whose OpenAPI schema is generated from the
-  backend and committed at `docs/api/openapi.yaml`.
+  backend and committed at `docs/api/openapi.yaml`. The frontend generates
+  `src/types/api/` from that snapshot and reaches the API only through
+  `src/api/`.
 - Within the frontend, `pages → features → components/lib → types`; shared code
   never imports pages or features.
 - Within the backend, `urls → views → serializers/services → models`; apps do not

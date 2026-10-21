@@ -30,6 +30,7 @@ and #17), and React, TypeScript, Vite, and pnpm are initialized in the frontend
 | Django | In use | Backend web framework; project lives under `backend/`. |
 | Django REST Framework | In use | JSON API under `/api/v1/`; initialized in issue #17 (JSON renderer only). |
 | drf-spectacular | In use | Generates the OpenAPI contract exposed at `/api/schema/` and `/api/docs/`; snapshot in `docs/api/openapi.yaml` (issue #22). |
+| openapi-typescript-codegen | In use | Generates `frontend/src/types/api/` from `docs/api/openapi.yaml` (`pnpm generate:api`); keeps frontend types aligned with the contract (issue #23). |
 | PostgreSQL | In use | Only database, in every environment including local development. |
 | uv | In use | Backend dependency and environment management; `backend/uv.lock` is committed. |
 | Docker | In use | Development images in `backend/Dockerfile` and `frontend/Dockerfile`. |

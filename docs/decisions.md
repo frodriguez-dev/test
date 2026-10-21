@@ -222,3 +222,29 @@ and consumption, and treat the backend code as the source of truth.
 - The version in `SPECTACULAR_SETTINGS` tracks the API contract, not the
   application release.
 - Schema generation runs offline and adds no runtime service.
+
+## 0010 — Typed frontend API client generated from the OpenAPI contract
+
+- **Status:** Accepted, initialized in issue #23
+- **Date:** 2026-10-21
+- **Issue:** #23
+
+**Context.** The frontend needs to call the backend without hand-copying request
+and response shapes, and without scattering `fetch` calls across components.
+Decision 0009 made the OpenAPI document the API contract.
+
+**Decision.** Generate TypeScript types from `docs/api/openapi.yaml` into
+`frontend/src/types/api/` with `openapi-typescript-codegen`. Perform all HTTP
+access through a single client in `frontend/src/api/` and expose typed endpoint
+functions from there. During development, the Vite dev server proxies `/api` to
+Django.
+
+**Consequences.**
+
+- API types are regenerated rather than maintained by hand; the committed
+  contract and `pnpm generate:api` keep them in sync.
+- UI components consume hooks and endpoint functions, so they stay independent
+  of HTTP details and easy to test.
+- The frontend uses relative `/api` URLs; the dev proxy and the production
+  reverse proxy own origin routing. CORS remains unnecessary for the default
+  development setup.
