@@ -53,6 +53,13 @@ if not SECRET_KEY:
 
 ALLOWED_HOSTS = _env_list("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1")
 
+# Django checks the `Origin` header on unsafe requests. In development the
+# frontend (Vite, :5173) and the API (Django, :8000) are different origins, so
+# the frontend origin must be trusted explicitly. Compose and
+# `backend/.env.example` set this variable; production must list its real
+# frontend origin here.
+CSRF_TRUSTED_ORIGINS = _env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",

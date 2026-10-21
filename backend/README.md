@@ -136,6 +136,7 @@ for the full up, logs, and down workflow.
 | `DJANGO_SECRET_KEY`    | Django cryptographic signing key | Required when `DJANGO_DEBUG=false`; ephemeral in development |
 | `DJANGO_DEBUG`         | Enable debug mode                | `false`                                                      |
 | `DJANGO_ALLOWED_HOSTS` | Comma-separated allowed hosts    | `localhost,127.0.0.1`                                        |
+| `DJANGO_CSRF_TRUSTED_ORIGINS` | Origins allowed on unsafe requests | `http://localhost:5173,http://127.0.0.1:5173` (from `.env.example`) |
 | `POSTGRES_DB`          | Database name                    | `app`                                                        |
 | `POSTGRES_USER`        | Database user                    | `app`                                                        |
 | `POSTGRES_PASSWORD`    | Database password                | Empty                                                        |
@@ -177,6 +178,10 @@ session cookie, and the frontend sends that cookie with each request.
   request, including login.
 - `POST /api/v1/auth/login/` requires `username` and `password` and returns
   `401` for invalid credentials.
+- Unsafe requests must come from an origin listed in
+  `DJANGO_CSRF_TRUSTED_ORIGINS`; otherwise Django rejects them with `403`. The
+  development frontend runs on a different origin than the API, so
+  `backend/.env.example` and `compose.yaml` include `http://localhost:5173`.
 - `POST /api/v1/auth/logout/` and `GET /api/v1/auth/me/` require an authenticated
   session; anonymous requests receive `401` with `WWW-Authenticate: Session`.
 - The session cookie is `HttpOnly` and `SameSite=Lax`. Session and CSRF cookies
