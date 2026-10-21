@@ -1,9 +1,10 @@
 # Backend
 
 Django REST API backed by PostgreSQL. Django, the PostgreSQL connection, Django
-REST Framework, and the OpenAPI contract are initialized, and the first endpoint
-(`GET /api/health/`) is available. This file defines the structure so code lands
-in a predictable place from the first commit.
+REST Framework, and the OpenAPI contract are initialized. Infrastructure exposes
+`GET /api/health/` and the versioned API exposes session authentication under
+`/api/v1/auth/`. This file defines the structure so code lands in a predictable
+place from the first commit.
 
 ## Structure
 
@@ -18,6 +19,13 @@ backend/
 │   ├── asgi.py
 │   └── wsgi.py
 ├── apps/
+│   ├── accounts/           # Session authentication and the current user
+│   │   ├── apps.py
+│   │   ├── authentication.py  # Session scheme documented in OpenAPI
+│   │   ├── serializers.py
+│   │   ├── views.py
+│   │   ├── urls.py
+│   │   └── tests/
 │   ├── core/               # Infrastructure endpoints (health check)
 │   │   ├── apps.py
 │   │   ├── views.py
@@ -38,8 +46,9 @@ backend/
 
 Only create the modules that are actually needed. `services.py` and
 `selectors.py` are optional and should appear when logic stops fitting cleanly in
-a view or serializer. There are no business apps yet; `apps/core/` holds
-cross-cutting infrastructure endpoints.
+a view or serializer. `apps/accounts/` uses Django's built-in user system and
+owns the authentication endpoints; `apps/core/` holds cross-cutting
+infrastructure endpoints.
 
 The root `pyproject.toml` is kept for now; the backend Python project lives under
 `backend/` and is managed with uv.
@@ -137,13 +146,37 @@ Django REST Framework serves JSON only (see `REST_FRAMEWORK` in
 | Method | Path | Response |
 | --- | --- | --- |
 | `GET` | `/api/health/` | `200` with `{"status": "ok"}` |
+| `GET` | `/api/v1/auth/csrf/` | `200` with a CSRF token and cookie |
+| `POST` | `/api/v1/auth/login/` | `200` with the user; sets the session cookie |
+| `POST` | `/api/v1/auth/logout/` | `204`; clears the session |
+| `GET` | `/api/v1/auth/me/` | `200` with the current user |
 | `GET` | `/api/schema/` | `200` with the generated OpenAPI 3 document |
 | `GET` | `/api/docs/` | Swagger UI for the generated document |
 
 `/api/health/` is an unversioned infrastructure endpoint for probes and startup
 checks. Business endpoints live under the versioned `/api/v1/` prefix
-(decision [0005](../docs/decisions.md)); the versioned surface is added with the
-first business domain.
+(decision [0005](../docs/decisions.md)).
+
+### Authentication
+
+The API uses Django session authentication (decision
+[0011](../docs/decisions.md)); there is no JWT and no token stored in
+`localStorage`. A successful login creates a server-side session and sets the
+session cookie, and the frontend sends that cookie with each request.
+
+- `GET /api/v1/auth/csrf/` sets the CSRF cookie and returns the token. Send the
+  token in the `X-CSRFToken` header on every `POST`, `PUT`, `PATCH`, or `DELETE`
+  request, including login.
+- `POST /api/v1/auth/login/` requires `username` and `password` and returns
+  `401` for invalid credentials.
+- `POST /api/v1/auth/logout/` and `GET /api/v1/auth/me/` require an authenticated
+  session; anonymous requests receive `401` with `WWW-Authenticate: Session`.
+- The session cookie is `HttpOnly` and `SameSite=Lax`. Session and CSRF cookies
+  are marked `Secure` when `DJANGO_DEBUG` is disabled, so production must be
+  served over HTTPS.
+
+Public registration, OAuth, and roles are out of scope. Users are created with
+Django's user system (for example `manage.py createsuperuser` or the admin).
 
 ### OpenAPI contract
 

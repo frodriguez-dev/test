@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     # Local apps
+    "apps.accounts",
     "apps.core",
 ]
 
@@ -133,11 +134,31 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Session authentication uses Django's session cookie. Mark cookies `Secure`
+# outside development so they are only sent over HTTPS; local development runs
+# over plain HTTP. Both cookies are same-site to limit cross-site requests; the
+# CSRF cookie stays readable by JavaScript so the frontend can echo it in the
+# `X-CSRFToken` header.
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_HTTPONLY = False
+
 # The API is consumed by the frontend over JSON; serve JSON only so every
 # response (including errors) has a predictable content type.
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
+    ],
+    # Session authentication only: no JWT and no tokens stored in the browser.
+    # DRF enforces CSRF for authenticated unsafe requests.
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "apps.accounts.authentication.SessionAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
@@ -157,5 +178,9 @@ SPECTACULAR_SETTINGS = {
     "SCHEMA_PATH_PREFIX": "/api",
     "TAGS": [
         {"name": "infrastructure", "description": "Operational endpoints."},
+        {
+            "name": "accounts",
+            "description": "Session authentication and the current user.",
+        },
     ],
 }

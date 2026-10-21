@@ -16,7 +16,6 @@ paths:
       - infrastructure
       security:
       - cookieAuth: []
-      - basicAuth: []
       - {}
       responses:
         '200':
@@ -25,8 +24,94 @@ paths:
               schema:
                 $ref: '#/components/schemas/HealthResponse'
           description: ''
+  /api/v1/auth/csrf/:
+    get:
+      operationId: v1_auth_csrf_retrieve
+      description: Set the CSRF cookie and return the token. Send the token in the
+        `X-CSRFToken` header on every unsafe request.
+      summary: Get a CSRF token
+      tags:
+      - accounts
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CsrfTokenResponse'
+          description: ''
+  /api/v1/auth/login/:
+    post:
+      operationId: v1_auth_login_create
+      description: Authenticate with a username and password and start a session.
+        The response sets the session cookie. The request requires a valid CSRF token.
+      summary: Log in
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Login'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+        '401':
+          description: Invalid credentials.
+  /api/v1/auth/logout/:
+    post:
+      operationId: v1_auth_logout_create
+      description: End the current session and clear its data. The request requires
+        a valid CSRF token.
+      summary: Log out
+      tags:
+      - accounts
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: Session ended.
+        '401':
+          description: Authentication required.
+  /api/v1/auth/me/:
+    get:
+      operationId: v1_auth_me_retrieve
+      description: Return the user associated with the current session.
+      summary: Get the current user
+      tags:
+      - accounts
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+        '401':
+          description: Authentication required.
 components:
   schemas:
+    CsrfTokenResponse:
+      type: object
+      description: CSRF token returned to browser clients.
+      properties:
+        csrfToken:
+          type: string
+          description: Token to send in the `X-CSRFToken` header on unsafe requests.
+      required:
+      - csrfToken
     HealthResponse:
       type: object
       description: Response returned by the health check endpoint.
@@ -36,10 +121,47 @@ components:
           description: Readiness marker; `ok` when the application can serve requests.
       required:
       - status
+    Login:
+      type: object
+      description: Credentials accepted by the login endpoint.
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+      - password
+      - username
+    User:
+      type: object
+      description: Public representation of the authenticated user.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        email:
+          type: string
+          format: email
+          readOnly: true
+          title: Email address
+        first_name:
+          type: string
+          readOnly: true
+        last_name:
+          type: string
+          readOnly: true
+      required:
+      - email
+      - first_name
+      - id
+      - last_name
+      - username
   securitySchemes:
-    basicAuth:
-      type: http
-      scheme: basic
     cookieAuth:
       type: apiKey
       in: cookie
@@ -47,3 +169,5 @@ components:
 tags:
 - name: infrastructure
   description: Operational endpoints.
+- name: accounts
+  description: Session authentication and the current user.

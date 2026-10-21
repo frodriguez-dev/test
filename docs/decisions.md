@@ -248,3 +248,32 @@ Django.
 - The frontend uses relative `/api` URLs; the dev proxy and the production
   reverse proxy own origin routing. CORS remains unnecessary for the default
   development setup.
+
+## 0011 — Django session authentication for the API
+
+- **Status:** Accepted, implemented in issue #24
+- **Date:** 2026-10-21
+- **Issue:** #24
+
+**Context.** The application needs a reusable way to sign users in and protect
+API operations without introducing a separate token authority. Django already
+ships users, sessions, and CSRF protection.
+
+**Decision.** Authenticate the API with Django session authentication and
+Django's built-in user system. Expose `csrf`, `login`, `logout`, and `me`
+endpoints under `/api/v1/auth/`; keep the session in Django's `HttpOnly` session
+cookie and require the CSRF token on unsafe requests. Provide the login screen
+and protected routes with React Router.
+
+**Consequences.**
+
+- No JWT, no tokens in `localStorage`, and no public registration, OAuth, or
+  role model; users are managed through Django's user system.
+- The frontend calls `GET /api/v1/auth/csrf/` to obtain a token and sends it in
+  the `X-CSRFToken` header on unsafe requests, including login.
+- Session and CSRF cookies use `SameSite=Lax`, are `HttpOnly` where applicable,
+  and are marked `Secure` when `DJANGO_DEBUG` is disabled.
+- Authentication state is server-authoritative: the frontend loads the current
+  user from `/api/v1/auth/me/` instead of decoding a token.
+- Cross-origin deployments need a same-site or proxy setup; the default
+  development proxy remains the supported path.
