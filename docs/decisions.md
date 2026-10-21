@@ -130,8 +130,8 @@ server proxies `/api` to the Django server so the frontend uses relative URLs.
   applications.
 - CORS is unnecessary in local development when the proxy is used; production
   deployment decides its own origin strategy.
-- API documentation will be added when the first endpoints exist; the format is
-  **PENDING**.
+- API documentation uses the OpenAPI schema generated from the backend
+  (decision 0009).
 
 ## 0006 — Configuration through environment variables
 
@@ -195,3 +195,30 @@ source lives under `src/components/ui/`, theme tokens in
   later decision.
 - Adding or updating a component requires running the shadcn CLI and committing
   the generated files together with `components.json`.
+
+## 0009 — OpenAPI schema as the API contract
+
+- **Status:** Accepted, initialized in issue #22
+- **Date:** 2026-10-19
+- **Issue:** #22
+
+**Context.** Frontend and backend are separate applications. Decision 0005
+established a versioned REST API but left the documentation format **PENDING**.
+Manual API documentation drifts from the implementation and duplicates
+information.
+
+**Decision.** Generate the OpenAPI 3 schema from the Django REST Framework code
+with drf-spectacular. Expose it at `/api/schema/` and a Swagger UI at
+`/api/docs/`. Commit a generated snapshot at `docs/api/openapi.yaml` for review
+and consumption, and treat the backend code as the source of truth.
+
+**Consequences.**
+
+- Endpoint documentation is expressed with serializers and
+  `extend_schema`; hand-written API references are not maintained.
+- `docs/api/openapi.yaml` must be regenerated with
+  `uv run manage.py spectacular --file ../docs/api/openapi.yaml` whenever the API
+  surface changes. Tests fail when the snapshot is stale or invalid.
+- The version in `SPECTACULAR_SETTINGS` tracks the API contract, not the
+  application release.
+- Schema generation runs offline and adds no runtime service.

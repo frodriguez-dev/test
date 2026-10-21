@@ -1,9 +1,9 @@
 # Backend
 
-Django REST API backed by PostgreSQL. Django, the PostgreSQL connection, and
-Django REST Framework are initialized, and the first endpoint (`GET
-/api/health/`) is available. This file defines the structure so code lands in a
-predictable place from the first commit.
+Django REST API backed by PostgreSQL. Django, the PostgreSQL connection, Django
+REST Framework, and the OpenAPI contract are initialized, and the first endpoint
+(`GET /api/health/`) is available. This file defines the structure so code lands
+in a predictable place from the first commit.
 
 ## Structure
 
@@ -21,6 +21,7 @@ backend/
 │   ├── core/               # Infrastructure endpoints (health check)
 │   │   ├── apps.py
 │   │   ├── views.py
+│   │   ├── serializers.py  # Response shapes documented in the OpenAPI schema
 │   │   ├── urls.py
 │   │   └── tests/
 │   └── <domain>/           # One Django app per business domain
@@ -136,11 +137,37 @@ Django REST Framework serves JSON only (see `REST_FRAMEWORK` in
 | Method | Path | Response |
 | --- | --- | --- |
 | `GET` | `/api/health/` | `200` with `{"status": "ok"}` |
+| `GET` | `/api/schema/` | `200` with the generated OpenAPI 3 document |
+| `GET` | `/api/docs/` | Swagger UI for the generated document |
 
 `/api/health/` is an unversioned infrastructure endpoint for probes and startup
 checks. Business endpoints live under the versioned `/api/v1/` prefix
 (decision [0005](../docs/decisions.md)); the versioned surface is added with the
 first business domain.
+
+### OpenAPI contract
+
+The API contract is generated from the Django REST Framework code with
+[drf-spectacular](https://drf-spectacular.readthedocs.io/) and is the single
+source of truth for the API. `docs/api/openapi.yaml` is a committed snapshot for
+review and consumption; do not edit it by hand. Regenerate it after changing the
+API surface:
+
+```sh
+uv run --env-file .env manage.py spectacular --file ../docs/api/openapi.yaml
+```
+
+Validate the generated document without writing it:
+
+```sh
+uv run --env-file .env manage.py spectacular --validate --file /dev/null
+```
+
+Tests fail when the committed snapshot differs from the code, and they validate
+both the generated and the committed documents. Describe endpoint parameters,
+request bodies, and responses with serializers and
+`drf_spectacular.utils.extend_schema` so they appear in the schema; keep
+prose documentation to what the schema cannot express.
 
 ## Ownership and boundaries
 

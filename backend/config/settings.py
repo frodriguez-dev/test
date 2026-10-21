@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Third-party
     "rest_framework",
+    "drf_spectacular",
     # Local apps
     "apps.core",
 ]
@@ -137,5 +138,24 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+# The OpenAPI schema is generated from the code and is the single source of
+# truth for the API contract. `docs/api/openapi.yaml` is a committed snapshot
+# used for review and consumption; regenerate it with:
+#   uv run manage.py spectacular --file ../docs/api/openapi.yaml
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Application API",
+    "DESCRIPTION": (
+        "JSON API for the application. The schema is generated from the Django "
+        "REST Framework code; do not edit it by hand."
+    ),
+    "VERSION": "0.1.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SCHEMA_PATH_PREFIX": "/api",
+    "TAGS": [
+        {"name": "infrastructure", "description": "Operational endpoints."},
     ],
 }

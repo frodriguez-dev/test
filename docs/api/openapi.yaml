@@ -1,0 +1,49 @@
+openapi: 3.0.3
+info:
+  title: Application API
+  version: 0.1.0
+  description: JSON API for the application. The schema is generated from the Django
+    REST Framework code; do not edit it by hand.
+paths:
+  /api/health/:
+    get:
+      operationId: health_retrieve
+      description: Report that the application is running and able to serve requests.
+        This endpoint does not touch the database and is meant for probes and startup
+        checks.
+      summary: Health check
+      tags:
+      - infrastructure
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+          description: ''
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      description: Response returned by the health check endpoint.
+      properties:
+        status:
+          type: string
+          description: Readiness marker; `ok` when the application can serve requests.
+      required:
+      - status
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+tags:
+- name: infrastructure
+  description: Operational endpoints.
