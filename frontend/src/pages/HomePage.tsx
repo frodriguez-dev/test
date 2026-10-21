@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { HealthStatus } from '@/features/health/HealthStatus'
 
 export function HomePage() {
   return (
@@ -19,16 +20,19 @@ export function HomePage() {
             shadcn/ui.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <div className="flex flex-wrap gap-2">
             <Button>Primary</Button>
             <Button variant="secondary">Secondary</Button>
             <Button variant="outline">Outline</Button>
           </div>
+          <div className="border-t pt-4">
+            <HealthStatus />
+          </div>
         </CardContent>
         <CardFooter>
           <p className="text-sm text-muted-foreground">
-            Button and Card components are installed.
+            The API client and generated OpenAPI types are connected.
           </p>
         </CardFooter>
       </Card>

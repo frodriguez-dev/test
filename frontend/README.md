@@ -12,9 +12,10 @@ Requires Node.js 20.19 or higher and pnpm.
 ```bash
 cd frontend
 pnpm install
-pnpm dev        # start the Vite dev server
-pnpm build      # type-check and build for production
-pnpm preview    # serve the production build locally
+pnpm dev          # start the Vite dev server
+pnpm build        # type-check and build for production
+pnpm preview      # serve the production build locally
+pnpm generate:api # regenerate TypeScript types from the OpenAPI contract
 ```
 
 ### Docker Compose
@@ -43,6 +44,7 @@ frontend/
 │   ├── pages/              # Route-level screens that compose features
 │   ├── styles/             # Global styles, design tokens, and theme setup
 │   ├── types/              # Shared TypeScript types
+│   │   └── api/            # Generated from docs/api/openapi.yaml; do not edit
 │   ├── App.tsx             # Route composition
 │   └── main.tsx            # Application entry point
 ├── components.json         # shadcn/ui configuration
@@ -65,6 +67,40 @@ needs `src/pages/` (the first screen) and `src/styles/` (global styles).
 ```ts
 import { HomePage } from '@/pages/HomePage'
 ```
+
+## API communication
+
+- During development the Vite dev server proxies every `/api` request to Django
+  (default `http://localhost:8000`). Configure the target with
+  `VITE_API_PROXY_TARGET`; Docker Compose sets it to `http://backend:8000`.
+  Copy `.env.example` to `.env` only if you need a different target.
+- API calls run through `src/api/client.ts`, which centralizes `fetch`, response
+  parsing, and errors (`ApiError`). Endpoint modules such as
+  `src/api/health.ts` use that client and return generated types; UI components
+  never call `fetch` directly.
+- `src/types/api/` is generated from the committed contract at
+  `docs/api/openapi.yaml` with
+  [openapi-typescript-codegen](https://github.com/hey-api/openapi-typescript-codegen).
+  Do not edit those files by hand; the contract is the source of truth.
+
+### Regenerating the API types
+
+Whenever a backend endpoint, serializer, or response changes, regenerate the
+contract and the TypeScript types in this order:
+
+```bash
+# 1. Regenerate the committed OpenAPI contract from the Django code.
+cd backend
+uv run --env-file .env manage.py spectacular --file ../docs/api/openapi.yaml
+
+# 2. Regenerate the TypeScript types from that contract.
+cd ../frontend
+pnpm generate:api
+```
+
+Commit `docs/api/openapi.yaml` and the changed files under
+`frontend/src/types/api/` together with the backend change. The backend test
+suite fails when the committed contract is stale.
 
 ## Styling
 

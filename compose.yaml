@@ -50,6 +50,8 @@ services:
       # Poll for file changes so hot module replacement also works when the
       # bind mount does not forward inotify events (for example Docker Desktop).
       CHOKIDAR_USEPOLLING: "true"
+      # The Vite dev proxy reaches Django over the Compose network.
+      VITE_API_PROXY_TARGET: http://backend:8000
     ports:
       - "${FRONTEND_PORT:-5173}:5173"
     volumes:
