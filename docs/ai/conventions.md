@@ -25,6 +25,9 @@ apply on top of the general rules in [`AGENTS.md`](../../AGENTS.md).
 - Shared documentation and architecture decisions live in `docs/`; agent
   instructions live in `AGENTS.md`; reusable agent skills live under
   `.agents/skills/<name>/`.
+- Issue and Pull Request templates live in `.github/`.
+- The root `Makefile` and `DEPLOYING.md` describe the supported local
+  development commands; they delegate to Docker Compose, uv, and pnpm.
 - Structure and conventions for each application are documented in
   [`frontend/README.md`](../../frontend/README.md) and
   [`backend/README.md`](../../backend/README.md).
@@ -54,6 +57,8 @@ Do not create empty directories or files without a documented purpose.
 - Name files by their primary export and colocate feature-specific components,
   hooks, and tests with their feature.
 - Use pnpm; do not introduce a second Node package manager.
+- `src/types/api/` is generated from `docs/api/openapi.yaml` with
+  `pnpm generate:api`; do not edit it by hand.
 - See [`frontend/README.md`](../../frontend/README.md) for the intended
   structure.
 
@@ -79,7 +84,8 @@ Do not create empty directories or files without a documented purpose.
 
   The tests use PostgreSQL and create a test database, so the configured role
   needs permission to create databases. Inside Docker Compose, use
-  `docker compose exec backend uv run --no-sync pytest`.
+  `docker compose exec backend uv run --no-sync pytest`. From the repository
+  root, `make backend-test` runs the same suite.
 
 - The frontend uses Vitest with React Testing Library; tests are colocated with
   the code they cover (`*.test.ts` or `*.test.tsx`). Run every frontend check
@@ -92,8 +98,23 @@ Do not create empty directories or files without a documented purpose.
   Individual commands are `pnpm typecheck`, `pnpm lint`, `pnpm format:check`,
   and `pnpm test`.
 
+- The OpenAPI contract is generated from the backend. When the API surface
+  changes, regenerate the snapshot and the frontend types, then rerun the
+  affected checks:
+
+  ```sh
+  # from backend/
+  uv run --env-file .env manage.py spectacular --file ../docs/api/openapi.yaml
+  # from frontend/
+  pnpm generate:api
+  ```
+
+  `docs/api/openapi.yaml` is committed; do not edit it by hand.
+
 - Every behavior change must keep the applicable test suites passing, and tests
   must be added or updated alongside behavior changes.
+- A documentation-only change does not need runtime tests, but must be reviewed
+  for valid links and formatting; `git diff --check` catches whitespace errors.
 
 ## Generated files
 
@@ -108,13 +129,30 @@ Do not commit generated or runtime files. The following are ignored via
 ## Git workflow
 
 - Branch from the main branch using a descriptive name, for example
-  `chore/<summary>` or `feature/<summary>`.
+  `feature/<summary>`, `fix/<summary>`, or `chore/<summary>`. Keep an
+  Orca-generated `<account>/<summary>` branch as created instead of renaming
+  another agent's branch.
 - Use Conventional Commit prefixes: `feat:`, `fix:`, `docs:`, `chore:`,
   `refactor:`, `test:`.
 - Keep commits focused: one logical change each.
 - Reference the related issue in the commit body or Pull Request.
 - Never rewrite shared history or force-push shared branches without explicit
   confirmation.
+
+## Issues and Pull Requests
+
+- Use the templates in `.github/`: `ISSUE_TEMPLATE/task.md` and
+  `pull_request_template.md`.
+- One issue per branch and Pull Request. Do not mix unrelated changes.
+- Write Pull Request descriptions in English and include the summary, related
+  issue, validation commands and results, and known risks.
+- Verify GitHub authentication with `gh auth status` before pushing or opening a
+  Pull Request. See [`orca.md`](orca.md#prerequisites-and-authentication) for
+  the full workflow.
+- Agents may open or update a Pull Request when authorized, but must not merge,
+  approve, close, or enable auto-merge on it. Merging is a human decision.
+- Respond to review feedback on the same branch and Pull Request; do not open a
+  duplicate Pull Request.
 
 ## Documentation
 

@@ -306,3 +306,36 @@ available targets through `make help`.
   remain defined by the tools and documented commands until a target is added
   deliberately.
 - `DEPLOYING.md` describes local development only, not a production deployment.
+
+## 0013 — Orca workspaces and GitHub Issues for agent work
+
+- **Status:** Accepted, implemented in issue #27
+- **Date:** 2026-10-21
+- **Issue:** #27
+
+**Context.** Multiple agents work in the same repository and need isolated
+working trees, a shared source of task scope, and a review boundary that does
+not depend on a custom orchestration system. The foundation already uses GitHub
+Issues and Pull Requests, but the operational flow and authentication
+requirements were implicit.
+
+**Decision.** Use GitHub Issues as the unit of work and Orca-managed worktrees
+for isolated implementation. Deliver every change as a Pull Request for human
+review. Agents may create commits, push branches, and open or update Pull
+Requests when authorized, but must not merge, approve, or close them. Document
+the workflow, Orca commands, and GitHub authentication in
+[`docs/ai/orca.md`](ai/orca.md) and provide Issue and Pull Request templates in
+`.github/`.
+
+**Consequences.**
+
+- One issue maps to one branch, worktree, and Pull Request.
+- Orca provides workspace isolation and agent sessions; no custom orchestrator
+  is built or maintained.
+- GitHub remains the source of truth for scope, review, and history.
+- Agents require an authenticated `gh` session with the `repo` scope to push and
+  open Pull Requests; the token is never stored in the repository.
+- Merging and approval stay human decisions, even when an agent has repository
+  permissions.
+- The issue and Pull Request templates keep summaries and validation visible
+  without duplicating `AGENTS.md`.

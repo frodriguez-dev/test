@@ -48,6 +48,41 @@ Exact upstream URLs:
 Third-party license notices are in
 [`THIRD_PARTY_NOTICES.md`](../../THIRD_PARTY_NOTICES.md).
 
+## Audit of installed skills
+
+Audited on 2026-10-21 against the current repository, which now has React,
+Django, and both test suites. No installed skill was removed or changed.
+
+| Pair | Relationship | Decision |
+| --- | --- | --- |
+| `systematic-debugging` / `test-driven-development` | Both can start with a failing test. Debugging investigates an existing failure; TDD drives new behavior. | Keep both. Use `systematic-debugging` first for a reported bug or failing suite; use TDD for new or changed behavior. |
+| `test-driven-development` / `verification-before-completion` | TDD governs the change; verification governs the completion claim. | Keep both. Verification is not a duplicate test procedure; it requires running the checks and reporting evidence. |
+| `find-skills` / `skill-creator` | Discovery versus authoring. | Keep both. `find-skills` may recommend an install; `skill-creator` creates or edits a local skill. |
+| `_template` / installed skills | The template is a scaffold, not an installed skill. | Keep it out of the catalog and discovery. |
+
+No two installed skills contain the same procedure, and none restates
+`AGENTS.md` wholesale. The catalog stays at five skills; adding a
+stack-specific skill is a separate decision.
+
+## Proposed minimal stack skills
+
+The repository needs a trustworthy minimal set covering React, Django, testing,
+and code review. The following candidates were inspected on 2026-10-21. They
+are **proposed only**: nothing in this section is installed, and installation
+requires explicit authorization plus the review in *Adding or evaluating a
+skill*.
+
+| Need | Candidate | Source | License | Notes |
+| --- | --- | --- | --- | --- |
+| React | `vercel-react-best-practices` | [`vercel-labs/agent-skills`](https://github.com/vercel-labs/agent-skills) | MIT (declared in `SKILL.md`) | Maintained by Vercel; covers React performance and review. Many rules target Next.js, which this repository does not use; apply only the client-side and React rules. |
+| Django | `django-expert` | [`vintasoftware/django-ai-plugins`](https://github.com/vintasoftware/django-ai-plugins) | MIT | Covers Django, DRF, ORM, security, and testing; explicitly portable across agents. Review its production-deployment advice against this repository's scope. |
+| Testing | `test-driven-development` + `verification-before-completion` | Already installed | MIT | Keep the existing pair. No additional testing skill is justified: the repository uses pytest and Vitest, and a browser/end-to-end skill is premature until Playwright is adopted. |
+| Code review | `code-review-and-quality` | [`addyosmani/agent-skills`](https://github.com/addyosmani/agent-skills) | MIT | Self-contained five-axis review. It points to companion skills that are not installed; treat those references as optional reading and review the text before installing. |
+
+If the proposal is approved, install the three new skills in project scope and
+record their revisions in the catalog above. Do not install the candidates
+together without checking each one against the current stack.
+
 ## When to use each skill
 
 - `find-skills`: the task needs a capability that may already exist as a skill.
@@ -144,17 +179,18 @@ install a skill automatically as a side effect of another skill.
 
 ## Deferred and rejected skills
 
-Stack-specific skills were evaluated against the current repository, which has
-no initialized application code, frontend implementation, or end-to-end test
-suite:
+Stack-specific skills were re-evaluated on 2026-10-21 against the initialized
+application. The React and Django candidates above moved from deferred to
+proposed; the rest remain out of scope:
 
 | Skill | Decision | Reason |
 | --- | --- | --- |
-| `vercel-react-best-practices` (`vercel-labs/agent-skills`) | Deferred | No React application exists yet. Re-evaluate when React is introduced. |
-| `web-design-guidelines` (`vercel-labs/agent-skills`) | Deferred | No web interface exists yet. Re-evaluate when one is introduced. |
+| `vercel-react-best-practices` (`vercel-labs/agent-skills`) | Proposed | React now exists; see *Proposed minimal stack skills*. |
+| `web-design-guidelines` (`vercel-labs/agent-skills`) | Pending evaluation | The UI exists, but design review is not part of the current workflow. Revisit when UI review becomes a recurring task. |
 | `playwright-best-practices` (`currents-dev/playwright-best-practices-skill`) | Deferred | Playwright is not used. Re-evaluate when end-to-end tests are added. |
 | `writing-plans` (`obra/superpowers`) | Rejected | Requires interactive plan review and an execution-method choice, references companion skills that are not installed (`subagent-driven-development`, `executing-plans`, `using-git-worktrees`), and prescribes a plan location and commit flow that duplicate this repository's conventions and the orchestrator's responsibilities. |
 | `requesting-code-review` (`obra/superpowers`) | Rejected | Assumes dispatching a `general-purpose` reviewer subagent and a fixed review workflow. This duplicates Orca's orchestration and the repository's review process, and the required subagent capability is not guaranteed across agents. |
+| `code-review` (`mattpocock/skills`) | Rejected | Requires two parallel sub-agents and a `/setup` step for the issue tracker; subagent support is not guaranteed across agents. Use the self-contained `code-review-and-quality` candidate instead. |
 
 ## Security notes
 
@@ -210,3 +246,16 @@ Performed on 2026-10-19:
   that time: the repository had no application code or test framework, so there
   was no meaningful change to exercise. Backend (pytest) and frontend (Vitest)
   suites now exist (issue #25); rerun the behavior tests when validating skills.
+
+Performed on 2026-10-21 (audit):
+
+- Confirmed the five installed directories, their `SKILL.md` front matter, and
+  the `.claude/skills` relative links.
+- Reviewed the overlap table in *Audit of installed skills*; no duplicate
+  procedure or contradiction with `AGENTS.md` was found.
+- Inspected the proposed candidates' `SKILL.md` and repository license
+  information. No skill was installed; the proposal remains subject to explicit
+  authorization and a full review.
+- The behavior tests for debugging, TDD, and verification were **not** rerun in
+  this audit; the existing pytest and Vitest suites are available for a future
+  validation run.
