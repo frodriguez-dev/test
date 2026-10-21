@@ -39,6 +39,8 @@ services:
       # Bind mount for automatic reload; dependencies live in the image.
       # The `z` flag relabels the mount for SELinux hosts such as Fedora.
       - ./backend:/app:z
+      # The schema contract tests compare against the committed OpenAPI file.
+      - ./docs:/docs:ro,z
     depends_on:
       db:
         condition: service_healthy

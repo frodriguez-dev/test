@@ -42,7 +42,5 @@ class CsrfTokenResponseSerializer(serializers.Serializer):
     """CSRF token returned to browser clients."""
 
     csrfToken = serializers.CharField(
-        help_text=(
-            "Token to send in the `X-CSRFToken` header on unsafe requests."
-        )
+        help_text=("Token to send in the `X-CSRFToken` header on unsafe requests.")
     )

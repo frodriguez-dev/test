@@ -9,7 +9,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.accounts.authentication import SessionAuthentication
 from apps.accounts.serializers import (
     CsrfTokenResponseSerializer,
     LoginSerializer,

@@ -43,9 +43,7 @@ class LoginTests(TestCase):
     def test_login_returns_user_and_starts_session(self) -> None:
         response = self.client.post(
             self.url,
-            data=json.dumps(
-                {"username": "alice", "password": self.password}
-            ),
+            data=json.dumps({"username": "alice", "password": self.password}),
             content_type="application/json",
         )
 
@@ -92,9 +90,7 @@ class LoginTests(TestCase):
 
         response = client.post(
             self.url,
-            data=json.dumps(
-                {"username": "alice", "password": self.password}
-            ),
+            data=json.dumps({"username": "alice", "password": self.password}),
             content_type="application/json",
         )
 
@@ -108,9 +104,7 @@ class LoginTests(TestCase):
 
         response = client.post(
             self.url,
-            data=json.dumps(
-                {"username": "alice", "password": self.password}
-            ),
+            data=json.dumps({"username": "alice", "password": self.password}),
             content_type="application/json",
             HTTP_X_CSRFTOKEN=token,
         )

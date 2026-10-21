@@ -96,11 +96,17 @@ warns, so commands such as `manage.py check` run without a `.env`. With
 `DJANGO_DEBUG` disabled the key is required and the settings module fails fast
 with an explicit error.
 
-Run the backend tests (Django's test runner; they need no database):
+Run the backend checks (pytest with pytest-django; the tests use PostgreSQL and
+create a test database):
 
 ```sh
-uv run --env-file .env manage.py test
+uv run --env-file .env pytest
+uv run ruff check .
+uv run ruff format --check .
 ```
+
+Use `uv run ruff format .` to apply formatting. Ruff and pytest are development
+dependencies declared in `backend/pyproject.toml`.
 
 ### Docker Compose
 
@@ -115,7 +121,9 @@ Run commands and tests inside the container with:
 
 ```sh
 docker compose exec backend uv run --no-sync manage.py check
-docker compose exec backend uv run --no-sync manage.py test
+docker compose exec backend uv run --no-sync pytest
+docker compose exec backend uv run --no-sync ruff check .
+docker compose exec backend uv run --no-sync ruff format --check .
 ```
 
 See the root [`README.md`](../README.md#local-development-with-docker-compose)
@@ -123,16 +131,16 @@ for the full up, logs, and down workflow.
 
 ### Environment variables
 
-| Variable | Purpose | Development default |
-| --- | --- | --- |
-| `DJANGO_SECRET_KEY` | Django cryptographic signing key | Required when `DJANGO_DEBUG=false`; ephemeral in development |
-| `DJANGO_DEBUG` | Enable debug mode | `false` |
-| `DJANGO_ALLOWED_HOSTS` | Comma-separated allowed hosts | `localhost,127.0.0.1` |
-| `POSTGRES_DB` | Database name | `app` |
-| `POSTGRES_USER` | Database user | `app` |
-| `POSTGRES_PASSWORD` | Database password | Empty |
-| `POSTGRES_HOST` | Database host | `localhost` |
-| `POSTGRES_PORT` | Database port | `5432` |
+| Variable               | Purpose                          | Development default                                          |
+| ---------------------- | -------------------------------- | ------------------------------------------------------------ |
+| `DJANGO_SECRET_KEY`    | Django cryptographic signing key | Required when `DJANGO_DEBUG=false`; ephemeral in development |
+| `DJANGO_DEBUG`         | Enable debug mode                | `false`                                                      |
+| `DJANGO_ALLOWED_HOSTS` | Comma-separated allowed hosts    | `localhost,127.0.0.1`                                        |
+| `POSTGRES_DB`          | Database name                    | `app`                                                        |
+| `POSTGRES_USER`        | Database user                    | `app`                                                        |
+| `POSTGRES_PASSWORD`    | Database password                | Empty                                                        |
+| `POSTGRES_HOST`        | Database host                    | `localhost`                                                  |
+| `POSTGRES_PORT`        | Database port                    | `5432`                                                       |
 
 The database variables match the official PostgreSQL image, so the Docker
 Compose setup reuses them without renaming. `.env` is ignored by Git; only
@@ -143,15 +151,15 @@ Compose setup reuses them without renaming. `.env` is ignored by Git; only
 Django REST Framework serves JSON only (see `REST_FRAMEWORK` in
 `config/settings.py`), so responses and errors have a predictable content type.
 
-| Method | Path | Response |
-| --- | --- | --- |
-| `GET` | `/api/health/` | `200` with `{"status": "ok"}` |
-| `GET` | `/api/v1/auth/csrf/` | `200` with a CSRF token and cookie |
-| `POST` | `/api/v1/auth/login/` | `200` with the user; sets the session cookie |
-| `POST` | `/api/v1/auth/logout/` | `204`; clears the session |
-| `GET` | `/api/v1/auth/me/` | `200` with the current user |
-| `GET` | `/api/schema/` | `200` with the generated OpenAPI 3 document |
-| `GET` | `/api/docs/` | Swagger UI for the generated document |
+| Method | Path                   | Response                                     |
+| ------ | ---------------------- | -------------------------------------------- |
+| `GET`  | `/api/health/`         | `200` with `{"status": "ok"}`                |
+| `GET`  | `/api/v1/auth/csrf/`   | `200` with a CSRF token and cookie           |
+| `POST` | `/api/v1/auth/login/`  | `200` with the user; sets the session cookie |
+| `POST` | `/api/v1/auth/logout/` | `204`; clears the session                    |
+| `GET`  | `/api/v1/auth/me/`     | `200` with the current user                  |
+| `GET`  | `/api/schema/`         | `200` with the generated OpenAPI 3 document  |
+| `GET`  | `/api/docs/`           | Swagger UI for the generated document        |
 
 `/api/health/` is an unversioned infrastructure endpoint for probes and startup
 checks. Business endpoints live under the versioned `/api/v1/` prefix

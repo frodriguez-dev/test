@@ -68,9 +68,30 @@ Do not create empty directories or files without a documented purpose.
 
 ## Tests
 
-- The backend uses Django's built-in test runner; run it with
-  `uv run --env-file .env manage.py test`. No frontend test runner is configured
-  yet; selecting one is **PENDING** (see [`docs/ai/tooling.md`](tooling.md)).
+- The backend uses pytest with pytest-django; tests live under each app's
+  `tests/` directory. Run the suite from `backend/`:
+
+  ```sh
+  uv run --env-file .env pytest
+  uv run ruff check .
+  uv run ruff format --check .
+  ```
+
+  The tests use PostgreSQL and create a test database, so the configured role
+  needs permission to create databases. Inside Docker Compose, use
+  `docker compose exec backend uv run --no-sync pytest`.
+
+- The frontend uses Vitest with React Testing Library; tests are colocated with
+  the code they cover (`*.test.ts` or `*.test.tsx`). Run every frontend check
+  from `frontend/`:
+
+  ```sh
+  pnpm check   # typecheck, lint, format check, and tests
+  ```
+
+  Individual commands are `pnpm typecheck`, `pnpm lint`, `pnpm format:check`,
+  and `pnpm test`.
+
 - Every behavior change must keep the applicable test suites passing, and tests
   must be added or updated alongside behavior changes.
 

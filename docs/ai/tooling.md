@@ -20,89 +20,89 @@ and #17), and React, TypeScript, Vite, and pnpm are initialized in the frontend
 (issue #18). Tailwind CSS and shadcn/ui provide the frontend visual system
 (issue #20).
 
-| Tool | Status | Notes |
-| --- | --- | --- |
-| React + TypeScript | In use | Frontend UI and language; initialized in issue #18. |
-| React Router | In use | Client-side routing and the protected-route guard (issue #24). |
-| Vite | In use | Frontend build and dev server; proxies `/api` during development. |
-| pnpm | In use | Frontend package manager; `frontend/pnpm-lock.yaml` is committed. |
-| Tailwind CSS | In use | Frontend styling through the `@tailwindcss/vite` plugin; configured in issue #20. |
-| shadcn/ui | In use | Frontend component source managed by its CLI; `frontend/components.json` is committed. |
-| Django | In use | Backend web framework; project lives under `backend/`. |
-| Django REST Framework | In use | JSON API under `/api/v1/`; initialized in issue #17 (JSON renderer only). |
-| drf-spectacular | In use | Generates the OpenAPI contract exposed at `/api/schema/` and `/api/docs/`; snapshot in `docs/api/openapi.yaml` (issue #22). |
+| Tool                       | Status | Notes                                                                                                                                               |
+| -------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| React + TypeScript         | In use | Frontend UI and language; initialized in issue #18. TypeScript is pinned to 6.0 because typescript-eslint does not support 7.0 yet.                 |
+| React Router               | In use | Client-side routing and the protected-route guard (issue #24).                                                                                      |
+| Vite                       | In use | Frontend build and dev server; proxies `/api` during development.                                                                                   |
+| pnpm                       | In use | Frontend package manager; `frontend/pnpm-lock.yaml` is committed.                                                                                   |
+| Tailwind CSS               | In use | Frontend styling through the `@tailwindcss/vite` plugin; configured in issue #20.                                                                   |
+| shadcn/ui                  | In use | Frontend component source managed by its CLI; `frontend/components.json` is committed.                                                              |
+| Django                     | In use | Backend web framework; project lives under `backend/`.                                                                                              |
+| Django REST Framework      | In use | JSON API under `/api/v1/`; initialized in issue #17 (JSON renderer only).                                                                           |
+| drf-spectacular            | In use | Generates the OpenAPI contract exposed at `/api/schema/` and `/api/docs/`; snapshot in `docs/api/openapi.yaml` (issue #22).                         |
 | openapi-typescript-codegen | In use | Generates `frontend/src/types/api/` from `docs/api/openapi.yaml` (`pnpm generate:api`); keeps frontend types aligned with the contract (issue #23). |
-| PostgreSQL | In use | Only database, in every environment including local development. |
-| uv | In use | Backend dependency and environment management; `backend/uv.lock` is committed. |
-| Docker | In use | Development images in `backend/Dockerfile` and `frontend/Dockerfile`. |
-| Docker Compose | In use | `compose.yaml` runs frontend, backend, and PostgreSQL together (issue #21). |
+| PostgreSQL                 | In use | Only database, in every environment including local development.                                                                                    |
+| uv                         | In use | Backend dependency and environment management; `backend/uv.lock` is committed.                                                                      |
+| Docker                     | In use | Development images in `backend/Dockerfile` and `frontend/Dockerfile`.                                                                               |
+| Docker Compose             | In use | `compose.yaml` runs frontend, backend, and PostgreSQL together (issue #21).                                                                         |
 
 ## Agents and coding assistants
 
-| Tool | Status | Notes |
-| --- | --- | --- |
-| AI coding agents (provider-independent) | In use | Governed by [`AGENTS.md`](../../AGENTS.md); no single vendor is assumed. |
-| Codex CLI | In use | Project skills discovery verified with `.agents/skills/`. |
-| OpenCode | In use | Project skills discovery verified with `.agents/skills/`. |
-| Claude Code | In use | Reads the same skills through relative links in `.claude/skills/`; discovery test pending authentication. |
+| Tool                                    | Status | Notes                                                                                                     |
+| --------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------- |
+| AI coding agents (provider-independent) | In use | Governed by [`AGENTS.md`](../../AGENTS.md); no single vendor is assumed.                                  |
+| Codex CLI                               | In use | Project skills discovery verified with `.agents/skills/`.                                                 |
+| OpenCode                                | In use | Project skills discovery verified with `.agents/skills/`.                                                 |
+| Claude Code                             | In use | Reads the same skills through relative links in `.claude/skills/`; discovery test pending authentication. |
 
 ## Agent skills
 
-| Tool | Status | Notes |
-| --- | --- | --- |
+| Tool                        | Status | Notes                                                                                               |
+| --------------------------- | ------ | --------------------------------------------------------------------------------------------------- |
 | `skills` CLI (`npx skills`) | In use | Version 1.7.2; project-scoped installs; lock file `skills-lock.json`. See [`skills.md`](skills.md). |
-| Installed Agent Skills | In use | Five third-party skills, vendored under `.agents/skills/`. |
+| Installed Agent Skills      | In use | Five third-party skills, vendored under `.agents/skills/`.                                          |
 
 ## Orchestration and autonomous execution
 
-| Tool | Status | Notes |
-| --- | --- | --- |
+| Tool                | Status             | Notes                                                                               |
+| ------------------- | ------------------ | ----------------------------------------------------------------------------------- |
 | Orchestration layer | Pending evaluation | Whether one is needed, and which, is **PENDING**. Out of scope for this foundation. |
 
 ## MCP tools
 
-| Tool | Status | Notes |
-| --- | --- | --- |
+| Tool        | Status             | Notes                                                           |
+| ----------- | ------------------ | --------------------------------------------------------------- |
 | MCP servers | Pending evaluation | Which servers to use and for which capabilities is **PENDING**. |
 
 ## Git and GitHub
 
-| Tool | Status | Notes |
-| --- | --- | --- |
-| Git | In use | Version control; Conventional Commits convention. |
-| GitHub (issues, Pull Requests) | In use | Issue-driven workflow; see `AGENTS.md`. |
-| GitHub CLI (`gh`) | In use | Reading issues and opening Pull Requests. |
+| Tool                           | Status | Notes                                             |
+| ------------------------------ | ------ | ------------------------------------------------- |
+| Git                            | In use | Version control; Conventional Commits convention. |
+| GitHub (issues, Pull Requests) | In use | Issue-driven workflow; see `AGENTS.md`.           |
+| GitHub CLI (`gh`)              | In use | Reading issues and opening Pull Requests.         |
 
 ## Testing and validation
 
-| Tool | Status | Notes |
-| --- | --- | --- |
-| Backend test runner | In use | Django's built-in test runner via `manage.py test`; used in issue #17. |
-| Frontend test runner | Pending evaluation | Not configured. Candidate: Vitest + React Testing Library. |
-| Coverage measurement | Pending evaluation | Not configured. |
+| Tool                 | Status             | Notes                                                                                    |
+| -------------------- | ------------------ | ---------------------------------------------------------------------------------------- |
+| Backend test runner  | In use             | pytest with pytest-django; configured in `backend/pyproject.toml` (issue #25).           |
+| Frontend test runner | In use             | Vitest with React Testing Library and jsdom; configured in `vite.config.ts` (issue #25). |
+| Coverage measurement | Pending evaluation | Not configured.                                                                          |
 
 ## Static analysis and code quality
 
-| Tool | Status | Notes |
-| --- | --- | --- |
-| Ruff | Proposed | Python linter and formatter for `backend/`; not yet adopted. |
-| Mypy | Proposed | Python type checker for `backend/`; not yet adopted. |
-| ESLint + Prettier | Proposed | Frontend linting and formatting; not configured in issue #18, still proposed. |
-| Pre-commit hooks | Pending evaluation | Would wire linters to Git; decided after linters. |
+| Tool              | Status             | Notes                                                                                                                        |
+| ----------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| Ruff              | In use             | Python linter and formatter for `backend/`; configured in `backend/pyproject.toml` (issue #25).                              |
+| Mypy              | Proposed           | Python type checker for `backend/`; not yet adopted.                                                                         |
+| ESLint + Prettier | In use             | Frontend linting and formatting; configured through `frontend/eslint.config.js` and `frontend/.prettierrc.json` (issue #25). |
+| Pre-commit hooks  | Pending evaluation | Would wire linters to Git; decided after linters.                                                                            |
 
 ## Security and permissions
 
-| Tool | Status | Notes |
-| --- | --- | --- |
-| Permission and safety rules | In use | Documented in [`AGENTS.md`](../../AGENTS.md) (destructive operations section). |
-| Secret scanning | Pending evaluation | Not configured. |
+| Tool                        | Status             | Notes                                                                          |
+| --------------------------- | ------------------ | ------------------------------------------------------------------------------ |
+| Permission and safety rules | In use             | Documented in [`AGENTS.md`](../../AGENTS.md) (destructive operations section). |
+| Secret scanning             | Pending evaluation | Not configured.                                                                |
 
 ## Documentation and context search
 
-| Tool | Status | Notes |
-| --- | --- | --- |
-| Markdown documentation | In use | `docs/ai/`, `README.md`, and `AGENTS.md`. |
-| Context / code search tooling | Pending evaluation | To be decided alongside MCP adoption. |
+| Tool                          | Status             | Notes                                     |
+| ----------------------------- | ------------------ | ----------------------------------------- |
+| Markdown documentation        | In use             | `docs/ai/`, `README.md`, and `AGENTS.md`. |
+| Context / code search tooling | Pending evaluation | To be decided alongside MCP adoption.     |
 
 ## How to add a tool
 

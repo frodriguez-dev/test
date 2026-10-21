@@ -19,10 +19,7 @@ export function HealthStatus() {
           role="status"
           className="flex items-center gap-2 text-sm text-muted-foreground"
         >
-          <LoaderCircle
-            className="size-4 animate-spin"
-            aria-hidden="true"
-          />
+          <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
           Checking /api/health/...
         </p>
       )}

@@ -16,12 +16,12 @@ backend, and PostgreSQL together for local development. Their structure is
 defined in [`frontend/README.md`](../../frontend/README.md) and
 [`backend/README.md`](../../backend/README.md).
 
-| Layer | Location | Responsibility | Depends on |
-| --- | --- | --- | --- |
-| Frontend | `frontend/` | React/TypeScript single-page application: routing, UI, client-side state, and HTTP access to the API. | Backend REST API only |
-| Backend | `backend/` | Django/DRF application: request handling, validation, business rules, persistence, and the versioned JSON API. | PostgreSQL |
-| Data | PostgreSQL | Durable relational storage and constraints. | — |
-| Documentation and AI guidance | `docs/`, `AGENTS.md`, `.agents/skills/` | Architecture, decisions, conventions, instructions, and task procedures. | — |
+| Layer                         | Location                                | Responsibility                                                                                                 | Depends on            |
+| ----------------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------- |
+| Frontend                      | `frontend/`                             | React/TypeScript single-page application: routing, UI, client-side state, and HTTP access to the API.          | Backend REST API only |
+| Backend                       | `backend/`                              | Django/DRF application: request handling, validation, business rules, persistence, and the versioned JSON API. | PostgreSQL            |
+| Data                          | PostgreSQL                              | Durable relational storage and constraints.                                                                    | —                     |
+| Documentation and AI guidance | `docs/`, `AGENTS.md`, `.agents/skills/` | Architecture, decisions, conventions, instructions, and task procedures.                                       | —                     |
 
 ```
 Browser
@@ -74,11 +74,11 @@ The rationale for these choices is recorded in
 The foundation separates three kinds of artifacts by **scope** and
 **responsibility**:
 
-| Artifact | Location | Scope | Responsibility |
-| --- | --- | --- | --- |
-| Instructions | `AGENTS.md` | Every task, repository-wide | How agents behave here: principles, conventions, safety rules, delivery checklist. |
-| Skills | `.agents/skills/<name>/SKILL.md` | A specific kind of task | Focused, reusable procedures an agent loads only when relevant. |
-| Tools | External, catalogued in `docs/ai/tooling.md` | Per capability | Executable capabilities (CLIs, MCP servers, services) that agents and humans invoke. |
+| Artifact     | Location                                     | Scope                       | Responsibility                                                                       |
+| ------------ | -------------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------ |
+| Instructions | `AGENTS.md`                                  | Every task, repository-wide | How agents behave here: principles, conventions, safety rules, delivery checklist.   |
+| Skills       | `.agents/skills/<name>/SKILL.md`             | A specific kind of task     | Focused, reusable procedures an agent loads only when relevant.                      |
+| Tools        | External, catalogued in `docs/ai/tooling.md` | Per capability              | Executable capabilities (CLIs, MCP servers, services) that agents and humans invoke. |
 
 Supporting documentation lives in `docs/ai/`:
 
@@ -115,9 +115,9 @@ AGENTS.md  ── general rules, always in effect ──────────
 docs/ai/tooling.md ── available capabilities ──────────────┘
 ```
 
-- `AGENTS.md` tells an agent *how to work* in general.
-- A skill tells an agent *how to perform a specific kind of task*.
-- A tool provides the *capability* the agent or human invokes.
+- `AGENTS.md` tells an agent _how to work_ in general.
+- A skill tells an agent _how to perform a specific kind of task_.
+- A tool provides the _capability_ the agent or human invokes.
 - `docs/ai/conventions.md` holds conventions shared by instructions, skills,
   and code.
 
@@ -164,8 +164,8 @@ The following are intentionally unresolved and should be decided in future
 iterations:
 
 - **PENDING**: whether an orchestration layer is needed and, if so, which one.
-- **PENDING**: which linters, formatters, and type checkers to adopt (see
-  `tooling.md`).
+- **PENDING**: whether to adopt a Python type checker (for example Mypy) and
+  coverage measurement (see `tooling.md`).
 - **PENDING**: which MCP servers, if any, to use and for which capabilities.
 - **PENDING**: whether skill updates should be automated with review gates; for
   now they are manual (see [`skills.md`](skills.md)).
