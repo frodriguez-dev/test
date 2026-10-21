@@ -31,8 +31,8 @@ export function LoginPage() {
             Sign in
           </CardTitle>
           <CardDescription>
-            Use your application account. The session is stored in an
-            HttpOnly cookie.
+            Use your application account. The session is stored in an HttpOnly
+            cookie.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -41,7 +41,10 @@ export function LoginPage() {
               role="status"
               className="flex items-center gap-2 text-sm text-muted-foreground"
             >
-              <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
+              <LoaderCircle
+                className="size-4 animate-spin"
+                aria-hidden="true"
+              />
               Checking your session...
             </p>
           )}

@@ -22,10 +22,10 @@ belong in skills (`.agents/skills/`); foundation notes belong in `docs/ai/`.
   - `backend/` — Django REST API; see `backend/README.md`.
   - `docs/` — architecture, decisions, conventions, and tooling notes.
   - `.agents/skills/` — reusable, task-specific skills.
-- **Tooling.** The backend (Django, psycopg, and uv) and frontend (React,
-  TypeScript, Vite, and pnpm) toolchains are installed. Remaining choices are
-  tracked as *PENDING* or *proposed* in `docs/ai/tooling.md`. Do not assume
-  linters, test frameworks, or MCP servers exist.
+- **Tooling.** The backend (Django, psycopg, uv, Ruff, pytest) and frontend
+  (React, TypeScript, Vite, pnpm, ESLint, Prettier, Vitest) toolchains are
+  installed. Remaining choices are tracked as *PENDING* or *proposed* in
+  `docs/ai/tooling.md`. Do not assume other tools or MCP servers exist.
 - **Read on demand:** `docs/ai/architecture.md` for how the components relate,
   `docs/decisions.md` for the rationale behind the stack and boundaries,
   `docs/ai/conventions.md` for coding and repository conventions, and
@@ -65,11 +65,12 @@ belong in skills (`.agents/skills/`); foundation notes belong in `docs/ai/`.
 
 ## Testing and quality
 
-- No test framework is configured yet (**PENDING**, see `docs/ai/tooling.md`).
-  Do not claim a check passed unless you actually ran it.
-- When a framework exists, run the tests affected by your change first, then
-  widen validation if the impact justifies it. Frontend and backend test suites
-  are separate; run the one that covers the change.
+- Run the checks that cover your change; the commands are documented in
+  [`docs/ai/conventions.md`](docs/ai/conventions.md#tests). Do not claim a check
+  passed unless you actually ran it.
+- Run the affected suite first, then widen validation if the impact justifies
+  it. Frontend and backend test suites are separate; run the one that covers the
+  change.
 - Add or update tests alongside behavior changes; a behavior change without
   applicable tests is incomplete unless the limitation is documented.
 - Never hide errors, for example by weakening assertions, catching exceptions

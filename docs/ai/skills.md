@@ -206,7 +206,7 @@ Performed on 2026-10-19:
 - Claude Code (2.1.220) discovery test could not run because the CLI was not
   authenticated in this environment. The `.claude/skills` links were verified
   structurally.
-- Full behavior tests for debugging, TDD, and verification are **pending**:
-  this repository has no application code or test framework, so there is no
-  meaningful change to exercise. Re-run them when the first executable code
-  and test suite are added.
+- Full behavior tests for debugging, TDD, and verification were **pending** at
+  that time: the repository had no application code or test framework, so there
+  was no meaningful change to exercise. Backend (pytest) and frontend (Vitest)
+  suites now exist (issue #25); rerun the behavior tests when validating skills.

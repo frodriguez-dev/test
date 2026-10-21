@@ -1,7 +1,9 @@
 """Authentication classes for the accounts app."""
 
 from drf_spectacular.extensions import OpenApiAuthenticationExtension
-from rest_framework.authentication import SessionAuthentication as DRFSessionAuthentication
+from rest_framework.authentication import (
+    SessionAuthentication as DRFSessionAuthentication,
+)
 
 
 class SessionAuthentication(DRFSessionAuthentication):

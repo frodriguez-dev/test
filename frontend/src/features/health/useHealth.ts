@@ -19,13 +19,13 @@ export function useHealth() {
   const [requestId, setRequestId] = useState(0)
 
   const reload = useCallback(() => {
+    setState({ status: 'loading' })
     setRequestId((current) => current + 1)
   }, [])
 
   useEffect(() => {
     const controller = new AbortController()
 
-    setState({ status: 'loading' })
     getHealth(controller.signal)
       .then((data) => {
         setState({ status: 'success', data })

@@ -15,6 +15,7 @@ pnpm dev          # start the Vite dev server
 pnpm build        # type-check and build for production
 pnpm preview      # serve the production build locally
 pnpm generate:api # regenerate TypeScript types from the OpenAPI contract
+pnpm check        # type-check, lint, format check, and tests
 ```
 
 ### Docker Compose
@@ -45,11 +46,14 @@ frontend/
 │   │   ├── HomePage.tsx    # Protected example route
 │   │   └── LoginPage.tsx   # Public login screen
 │   ├── styles/             # Global styles, design tokens, and theme setup
+│   ├── test/               # Vitest setup shared by every test file
 │   ├── types/              # Shared TypeScript types
 │   │   └── api/            # Generated from docs/api/openapi.yaml; do not edit
 │   ├── App.tsx             # Route composition
 │   └── main.tsx            # Application entry point
 ├── components.json         # shadcn/ui configuration
+├── eslint.config.js        # ESLint flat configuration
+├── .prettierrc.json        # Prettier formatting rules
 ├── index.html
 ├── package.json
 ├── pnpm-lock.yaml
@@ -118,6 +122,7 @@ suite fails when the committed contract is stale.
   credentials or session tokens in `localStorage` or application state.
 
 ## Styling
+
 - Tailwind CSS v4 is enabled through the `@tailwindcss/vite` plugin and imported
   from `src/styles/global.css`. Write utility classes in components; avoid
   hand-written component CSS.
@@ -134,6 +139,26 @@ suite fails when the committed contract is stale.
 - Do not add another UI library or a custom design system until a later issue
   decides one. shadcn/ui primitives and the generated components are the
   exception because they ship with the CLI.
+
+## Testing and quality
+
+- **Tests.** Vitest runs in a jsdom environment with React Testing Library. Test
+  files are colocated with their code as `*.test.ts` or `*.test.tsx`, and
+  `src/test/setup.ts` registers the jest-dom matchers and cleanup. Run the suite
+  once with `pnpm test` or in watch mode with `pnpm test:watch`.
+- **Linting.** ESLint uses the flat configuration in `eslint.config.js` with the
+  TypeScript, React Hooks, and React Refresh rules. Generated files under
+  `src/types/api/` and shadcn/ui components are excluded from the rules that do
+  not apply to generated code.
+- **Formatting.** Prettier is the single formatter; `pnpm format` writes changes
+  and `pnpm format:check` verifies them. Generated API types, UI primitives, and
+  lock files are ignored in `.prettierignore`.
+- **Type checks.** `pnpm typecheck` runs `tsc -b` over the application and Node
+  configurations without emitting files.
+
+`pnpm check` runs all four checks in sequence and is the command to use before
+opening a Pull Request. Keep tests focused on behavior that can regress; do not
+add assertions that only restate the implementation.
 
 ## Ownership and boundaries
 

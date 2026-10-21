@@ -16,14 +16,15 @@ endpoint (`GET /api/health/`), issue #21 added the Docker Compose
 development environment, issue #22 added the generated OpenAPI contract and
 its documentation endpoints, issue #23 connected the frontend to the API
 with a typed HTTP client, and issue #24 added session authentication with a
-login screen and protected routes.
+login screen and protected routes. Issue #25 added Ruff, pytest, ESLint,
+Prettier, Vitest, and React Testing Library.
 
-| Layer | Stack | Location |
-| --- | --- | --- |
-| Frontend | React, TypeScript, Vite, pnpm | `frontend/` |
-| Backend | Django, Django REST Framework, uv | `backend/` |
-| Database | PostgreSQL | Accessed by the backend only |
-| API | REST/JSON under `/api/v1/` (plus `GET /api/health/`) | `backend/` |
+| Layer    | Stack                                                | Location                     |
+| -------- | ---------------------------------------------------- | ---------------------------- |
+| Frontend | React, TypeScript, Vite, pnpm                        | `frontend/`                  |
+| Backend  | Django, Django REST Framework, uv                    | `backend/`                   |
+| Database | PostgreSQL                                           | Accessed by the backend only |
+| API      | REST/JSON under `/api/v1/` (plus `GET /api/health/`) | `backend/`                   |
 
 ## Purpose
 
@@ -92,11 +93,11 @@ docker compose down -v           # stop the services and delete database data
 
 The services are available at:
 
-| Service | Address | Notes |
-| --- | --- | --- |
-| Frontend | <http://localhost:5173> | Vite dev server with hot module replacement. |
-| Backend | <http://localhost:8000> | Django dev server; `GET /api/health/` reports `{"status": "ok"}`. API docs at `/api/docs/`, schema at `/api/schema/`. |
-| Database | `db:5432` | PostgreSQL, reachable only from the other Compose services. |
+| Service  | Address                 | Notes                                                                                                                 |
+| -------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Frontend | <http://localhost:5173> | Vite dev server with hot module replacement.                                                                          |
+| Backend  | <http://localhost:8000> | Django dev server; `GET /api/health/` reports `{"status": "ok"}`. API docs at `/api/docs/`, schema at `/api/schema/`. |
+| Database | `db:5432`               | PostgreSQL, reachable only from the other Compose services.                                                           |
 
 Source directories are bind-mounted, so frontend and backend reload on change.
 The backend applies migrations on startup and waits for the PostgreSQL
@@ -112,6 +113,24 @@ Never commit real credentials. The `.env` file is ignored by Git.
 For the non-Docker setup, see [`backend/README.md`](backend/README.md) and
 [`frontend/README.md`](frontend/README.md).
 
+## Quality checks
+
+Run the checks for the layer you changed:
+
+```sh
+# Backend (from backend/); requires PostgreSQL
+uv run --env-file .env pytest
+uv run ruff check .
+uv run ruff format --check .
+
+# Frontend (from frontend/)
+pnpm check   # typecheck, lint, format check, and tests
+```
+
+The backend tests create a test database. With Docker Compose running, use
+`docker compose exec backend uv run --no-sync pytest` instead. See
+[`docs/ai/conventions.md`](docs/ai/conventions.md#tests) for details.
+
 ## Status
 
 This is an early foundation. The monorepo structure is defined and the backend
@@ -121,8 +140,10 @@ infrastructure endpoint `GET /api/health/`, the generated OpenAPI contract at
 `/api/schema/` and `/api/docs/`, and session authentication endpoints under
 `/api/v1/auth/`. The frontend calls the API through a centralized HTTP client
 with generated TypeScript types, shows the health check's loading, success, and
-error states, and protects an example route behind a login screen.
+error states, and protects an example route behind a login screen. Ruff and
+pytest cover the backend; ESLint, Prettier, Vitest, and React Testing Library
+cover the frontend.
 `docker compose up --build` starts the complete development stack. Unresolved
-choices are tracked as *PENDING* in the `docs/ai/` documents rather than assumed.
+choices are tracked as _PENDING_ in the `docs/ai/` documents rather than assumed.
 A first set of professional Agent Skills is installed and versioned in the
 repository; see [`docs/ai/skills.md`](docs/ai/skills.md).
