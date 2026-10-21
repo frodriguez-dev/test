@@ -17,7 +17,8 @@ development environment, issue #22 added the generated OpenAPI contract and
 its documentation endpoints, issue #23 connected the frontend to the API
 with a typed HTTP client, and issue #24 added session authentication with a
 login screen and protected routes. Issue #25 added Ruff, pytest, ESLint,
-Prettier, Vitest, and React Testing Library.
+Prettier, Vitest, and React Testing Library. Issue #37 added the root `Makefile`
+and [`DEPLOYING.md`](DEPLOYING.md).
 
 | Layer    | Stack                                                | Location                     |
 | -------- | ---------------------------------------------------- | ---------------------------- |
@@ -40,6 +41,8 @@ Prettier, Vitest, and React Testing Library.
 .
 ├── AGENTS.md            # Instructions for AI coding agents
 ├── README.md            # This file
+├── DEPLOYING.md         # Step-by-step local development guide
+├── Makefile             # Development commands for Docker and local toolchains
 ├── THIRD_PARTY_NOTICES.md  # Licenses for vendored skills
 ├── skills-lock.json     # Agent Skills installer lock file
 ├── compose.yaml         # Development environment: frontend, backend, and db
@@ -77,18 +80,24 @@ Read the foundation in this order:
 6. [`docs/ai/skills.md`](docs/ai/skills.md) — installed Agent Skills,
    provenance, and maintenance.
 7. [`.agents/skills/`](.agents/skills/README.md) — reusable agent skills.
+8. [`DEPLOYING.md`](DEPLOYING.md) — how to start and verify the development
+   environment.
 
 ## Local development with Docker Compose
 
-Requires Docker Engine with the Compose plugin. The configuration targets local
-development only; it is not a production deployment.
+Requires Docker Engine with the Compose plugin and GNU Make. The configuration
+targets local development only; it is not a production deployment. For a
+complete step-by-step guide, including the non-Docker workflow and
+troubleshooting, see [`DEPLOYING.md`](DEPLOYING.md). `make help` lists every
+target.
 
 ```sh
-docker compose up --build        # build images and start db, backend, frontend
-docker compose up -d --build     # same, in the background
-docker compose logs -f           # follow service logs
-docker compose down              # stop the services, keep database data
-docker compose down -v           # stop the services and delete database data
+make up-build     # build images and start db, backend, frontend in background
+make up           # start existing images without rebuilding
+make logs         # follow service logs
+make status       # show service status
+make down         # stop the services, keep database data
+make down-volumes # stop the services and delete database data (destructive)
 ```
 
 The services are available at:
@@ -99,18 +108,19 @@ The services are available at:
 | Backend  | <http://localhost:8000> | Django dev server; `GET /api/health/` reports `{"status": "ok"}`. API docs at `/api/docs/`, schema at `/api/schema/`. |
 | Database | `db:5432`               | PostgreSQL, reachable only from the other Compose services.                                                           |
 
-Source directories are bind-mounted, so frontend and backend reload on change.
+`make health` checks `GET /api/health/` from the host. Source directories are
+bind-mounted, so frontend and backend reload on change.
 The backend applies migrations on startup and waits for the PostgreSQL
 healthcheck before starting. PostgreSQL data lives in the named volume
-`postgres_data`; `docker compose down` keeps it and `docker compose down -v`
-removes it.
+`postgres_data`; `make down` keeps it and `make down-volumes` removes it.
 
 The credentials in `compose.yaml` are non-secret development defaults. Override
 them with shell environment variables or a local root `.env` file (for example
 `POSTGRES_PASSWORD`, `DJANGO_SECRET_KEY`, `BACKEND_PORT`, or `FRONTEND_PORT`).
 Never commit real credentials. The `.env` file is ignored by Git.
 
-For the non-Docker setup, see [`backend/README.md`](backend/README.md) and
+For the non-Docker setup, follow [`DEPLOYING.md`](DEPLOYING.md) or see
+[`backend/README.md`](backend/README.md) and
 [`frontend/README.md`](frontend/README.md).
 
 ## Quality checks
@@ -143,7 +153,7 @@ with generated TypeScript types, shows the health check's loading, success, and
 error states, and protects an example route behind a login screen. Ruff and
 pytest cover the backend; ESLint, Prettier, Vitest, and React Testing Library
 cover the frontend.
-`docker compose up --build` starts the complete development stack. Unresolved
+`make up-build` starts the complete development stack. Unresolved
 choices are tracked as _PENDING_ in the `docs/ai/` documents rather than assumed.
 A first set of professional Agent Skills is installed and versioned in the
 repository; see [`docs/ai/skills.md`](docs/ai/skills.md).

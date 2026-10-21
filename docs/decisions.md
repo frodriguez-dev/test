@@ -277,3 +277,32 @@ and protected routes with React Router.
   user from `/api/v1/auth/me/` instead of decoding a token.
 - Cross-origin deployments need a same-site or proxy setup; the default
   development proxy remains the supported path.
+
+## 0012 — Root Makefile for development commands
+
+- **Status:** Accepted, implemented in issue #37
+- **Date:** 2026-10-21
+- **Issue:** #37
+
+**Context.** The Docker Compose workflow and the local uv and pnpm workflows were
+documented in several files, so newcomers and agents had to remember commands
+from different places. Decision 0001 kept a root-level task runner out until a
+concrete need appeared; the need is now the repeated startup, shell, and test
+commands.
+
+**Decision.** Add a root `Makefile` that centralizes the common development
+commands and delegates to Docker Compose, uv, and pnpm. Document the full local
+development workflow in `DEPLOYING.md`, link it from `README.md`, and expose the
+available targets through `make help`.
+
+**Consequences.**
+
+- The `Makefile` contains no application logic and does not replace
+  `compose.yaml`, the Dockerfiles, or the application manifests; it only invokes
+  them with configurable defaults.
+- Ports, service names, and Compose settings can be overridden on the command
+  line without editing files.
+- Linting, formatting, and new tooling are not invented in the `Makefile`; they
+  remain defined by the tools and documented commands until a target is added
+  deliberately.
+- `DEPLOYING.md` describes local development only, not a production deployment.

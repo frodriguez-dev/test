@@ -36,6 +36,7 @@ and #17), and React, TypeScript, Vite, and pnpm are initialized in the frontend
 | uv                         | In use | Backend dependency and environment management; `backend/uv.lock` is committed.                                                                      |
 | Docker                     | In use | Development images in `backend/Dockerfile` and `frontend/Dockerfile`.                                                                               |
 | Docker Compose             | In use | `compose.yaml` runs frontend, backend, and PostgreSQL together (issue #21).                                                                         |
+| GNU Make                   | In use | Root `Makefile` wraps the Docker Compose, uv, and pnpm development commands (issue #37).                                                              |
 
 ## Agents and coding assistants
 
