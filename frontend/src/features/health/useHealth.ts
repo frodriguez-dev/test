@@ -18,6 +18,7 @@ export function useHealth() {
   const [state, setState] = useState<HealthState>({ status: 'loading' })
   const [requestId, setRequestId] = useState(0)
 
+  /** Retry the health request by triggering the effect again. */
   const reload = useCallback(() => {
     setRequestId((current) => current + 1)
   }, [])
