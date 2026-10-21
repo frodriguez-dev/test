@@ -4,7 +4,7 @@ import json
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.test import Client, TestCase
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 User = get_user_model()
@@ -111,6 +111,40 @@ class LoginTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(int(client.session["_auth_user_id"]), self.user.pk)
+
+    @override_settings(CSRF_TRUSTED_ORIGINS=["http://localhost:5173"])
+    def test_login_accepts_a_trusted_frontend_origin(self) -> None:
+        client = Client(enforce_csrf_checks=True)
+        csrf_response = client.get(reverse("accounts:csrf"))
+        token = csrf_response.json()["csrfToken"]
+
+        response = client.post(
+            self.url,
+            data=json.dumps({"username": "alice", "password": self.password}),
+            content_type="application/json",
+            HTTP_X_CSRFTOKEN=token,
+            HTTP_ORIGIN="http://localhost:5173",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(int(client.session["_auth_user_id"]), self.user.pk)
+
+    @override_settings(CSRF_TRUSTED_ORIGINS=["http://localhost:5173"])
+    def test_login_rejects_an_untrusted_origin(self) -> None:
+        client = Client(enforce_csrf_checks=True)
+        csrf_response = client.get(reverse("accounts:csrf"))
+        token = csrf_response.json()["csrfToken"]
+
+        response = client.post(
+            self.url,
+            data=json.dumps({"username": "alice", "password": self.password}),
+            content_type="application/json",
+            HTTP_X_CSRFTOKEN=token,
+            HTTP_ORIGIN="http://evil.example",
+        )
+
+        self.assertEqual(response.status_code, 403)
+        self.assertNotIn("_auth_user_id", client.session)
 
 
 class CurrentUserTests(TestCase):

@@ -61,6 +61,7 @@ POSTGRES_USER=app
 POSTGRES_PASSWORD=change-me-in-development
 DJANGO_SECRET_KEY=change-me-in-development
 DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,backend
+DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 BACKEND_PORT=8000
 FRONTEND_PORT=5173
 ```
@@ -86,6 +87,7 @@ The main variables are:
 | `DJANGO_SECRET_KEY`    | Django cryptographic signing key | `change-me-in-development` |
 | `DJANGO_DEBUG`         | Enable debug mode                | `true`                   |
 | `DJANGO_ALLOWED_HOSTS` | Comma-separated allowed hosts    | `localhost,127.0.0.1`    |
+| `DJANGO_CSRF_TRUSTED_ORIGINS` | Origins allowed on unsafe requests | `http://localhost:5173,http://127.0.0.1:5173` |
 | `POSTGRES_DB`          | Database name                    | `app`                    |
 | `POSTGRES_USER`        | Database user                    | `app`                    |
 | `POSTGRES_PASSWORD`    | Database password                | `change-me-in-development` |
@@ -350,6 +352,18 @@ for normal development.
 Add the host you use to `DJANGO_ALLOWED_HOSTS`. For the Docker workflow, put it
 in the root `.env`; for the local workflow, put it in `backend/.env`. The
 Compose default already includes `localhost`, `127.0.0.1`, and `backend`.
+
+### `CSRF verification failed` when logging in
+
+Django rejects unsafe requests whose `Origin` header is not listed in
+`DJANGO_CSRF_TRUSTED_ORIGINS`. Add the frontend origin, including the port you
+use, to the root `.env` (Docker) or `backend/.env` (local), then restart the
+backend. The default is `http://localhost:5173,http://127.0.0.1:5173`, and
+Compose adjusts it to `FRONTEND_PORT`.
+
+```dotenv
+DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+```
 
 ### The frontend shows network errors
 
