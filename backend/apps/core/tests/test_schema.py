@@ -45,6 +45,39 @@ class SchemaEndpointTests(SimpleTestCase):
         )
 
 
+class AuthSchemaTests(SimpleTestCase):
+    """The generated schema documents the session authentication endpoints."""
+
+    def test_auth_endpoints_are_documented(self) -> None:
+        paths = generate_schema()["paths"]
+
+        self.assertIn("/api/v1/auth/csrf/", paths)
+        self.assertIn("/api/v1/auth/login/", paths)
+        self.assertIn("/api/v1/auth/logout/", paths)
+        self.assertIn("/api/v1/auth/me/", paths)
+
+    def test_login_documents_its_request_and_user_response(self) -> None:
+        login = generate_schema()["paths"]["/api/v1/auth/login/"]["post"]
+
+        self.assertEqual(login["summary"], "Log in")
+        self.assertEqual(
+            login["requestBody"]["content"]["application/json"]["schema"],
+            {"$ref": "#/components/schemas/Login"},
+        )
+        self.assertEqual(
+            login["responses"]["200"]["content"]["application/json"]["schema"],
+            {"$ref": "#/components/schemas/User"},
+        )
+
+    def test_login_is_public_and_current_user_requires_a_session(self) -> None:
+        schema = generate_schema()
+        login = schema["paths"]["/api/v1/auth/login/"]["post"]
+        current_user = schema["paths"]["/api/v1/auth/me/"]["get"]
+
+        self.assertNotIn("security", login)
+        self.assertEqual(current_user["security"], [{"cookieAuth": []}])
+
+
 class SchemaContractTests(SimpleTestCase):
     """The generated contract is valid and the committed snapshot is current."""
 
