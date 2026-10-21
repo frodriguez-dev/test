@@ -6,19 +6,19 @@ system, and architecture documentation that humans and agents can both follow
 and build on. It is also the monorepo for the React and Django applications
 described below.
 
-## Planned stack
+## Stack
 
-The backend is initialized with Django, Django REST Framework, PostgreSQL, and
-uv; the frontend is initialized with React, TypeScript, Vite, and pnpm. Issue #16
-established the structure, issue #18 added the frontend toolchain, issue #19
-initialized the backend, issue #17 added Django REST Framework and the first
-endpoint (`GET /api/health/`), issue #21 added the Docker Compose
-development environment, issue #22 added the generated OpenAPI contract and
-its documentation endpoints, issue #23 connected the frontend to the API
-with a typed HTTP client, and issue #24 added session authentication with a
-login screen and protected routes. Issue #25 added Ruff, pytest, ESLint,
-Prettier, Vitest, and React Testing Library. Issue #37 added the root `Makefile`
-and [`DEPLOYING.md`](DEPLOYING.md).
+The backend uses Django, Django REST Framework, PostgreSQL, and uv; the frontend
+uses React, TypeScript, Vite, and pnpm. Issue #16 established the structure,
+issue #18 added the frontend toolchain, issue #19 initialized the backend, issue
+#17 added Django REST Framework and the first endpoint (`GET /api/health/`),
+issue #21 added the Docker Compose development environment, issue #22 added the
+generated OpenAPI contract and its documentation endpoints, issue #23 connected
+the frontend to the API with a typed HTTP client, and issue #24 added session
+authentication with a login screen and protected routes. Issue #25 added Ruff,
+pytest, ESLint, Prettier, Vitest, and React Testing Library. Issue #37 added the
+root `Makefile` and [`DEPLOYING.md`](DEPLOYING.md). Issue #27 documented the Orca
+and GitHub issue workflow.
 
 | Layer    | Stack                                                | Location                     |
 | -------- | ---------------------------------------------------- | ---------------------------- |
@@ -51,6 +51,7 @@ and [`DEPLOYING.md`](DEPLOYING.md).
 │   └── skills/          # Installed skills, template, and catalog
 ├── .claude/
 │   └── skills/          # Relative links to the canonical skills
+├── .github/             # Issue and Pull Request templates
 ├── backend/             # Django REST API (Django + DRF + PostgreSQL initialized)
 │   ├── Dockerfile       # Development image
 │   └── README.md        # Backend structure, setup, and boundaries
@@ -61,7 +62,7 @@ and [`DEPLOYING.md`](DEPLOYING.md).
     ├── decisions.md     # Fundamental architecture decisions
     ├── api/
     │   └── openapi.yaml # Generated OpenAPI contract snapshot
-    └── ai/              # Architecture, conventions, tooling, and skills notes
+    └── ai/              # Architecture, conventions, workflow, tooling, and skills notes
 ```
 
 ## Getting started
@@ -69,18 +70,20 @@ and [`DEPLOYING.md`](DEPLOYING.md).
 Read the foundation in this order:
 
 1. [`AGENTS.md`](AGENTS.md) — how agents should work in this repository.
-2. [`docs/ai/architecture.md`](docs/ai/architecture.md) — how the application
+2. [`docs/ai/orca.md`](docs/ai/orca.md) — the issue-to-pull-request workflow
+   with Orca and GitHub.
+3. [`docs/ai/architecture.md`](docs/ai/architecture.md) — how the application
    layers and the AI foundation fit together.
-3. [`docs/decisions.md`](docs/decisions.md) — why the stack and boundaries were
+4. [`docs/decisions.md`](docs/decisions.md) — why the stack and boundaries were
    chosen.
-4. [`docs/ai/conventions.md`](docs/ai/conventions.md) — coding, repository, and
+5. [`docs/ai/conventions.md`](docs/ai/conventions.md) — coding, repository, and
    dependency conventions.
-5. [`docs/ai/tooling.md`](docs/ai/tooling.md) — tools that are used, proposed,
+6. [`docs/ai/tooling.md`](docs/ai/tooling.md) — tools that are used, proposed,
    or still being evaluated.
-6. [`docs/ai/skills.md`](docs/ai/skills.md) — installed Agent Skills,
+7. [`docs/ai/skills.md`](docs/ai/skills.md) — installed Agent Skills,
    provenance, and maintenance.
-7. [`.agents/skills/`](.agents/skills/README.md) — reusable agent skills.
-8. [`DEPLOYING.md`](DEPLOYING.md) — how to start and verify the development
+8. [`.agents/skills/`](.agents/skills/README.md) — reusable agent skills.
+9. [`DEPLOYING.md`](DEPLOYING.md) — how to start and verify the development
    environment.
 
 ## Local development with Docker Compose
@@ -156,4 +159,6 @@ cover the frontend.
 `make up-build` starts the complete development stack. Unresolved
 choices are tracked as _PENDING_ in the `docs/ai/` documents rather than assumed.
 A first set of professional Agent Skills is installed and versioned in the
-repository; see [`docs/ai/skills.md`](docs/ai/skills.md).
+repository; see [`docs/ai/skills.md`](docs/ai/skills.md). Issue and Pull Request
+templates live in `.github/`, and the Orca-based issue workflow is documented in
+[`docs/ai/orca.md`](docs/ai/orca.md).

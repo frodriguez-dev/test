@@ -3,8 +3,11 @@
 Tools that are used, proposed, or still being evaluated for AI-assisted
 development in this repository.
 
-**No external service is installed or configured as part of this foundation.**
-The catalog records candidates and decisions; adoption happens in later tasks.
+The repository does not depend on a hosted AI service at build or runtime.
+Orca and the GitHub CLI are used for local workspace and Pull Request
+operations, and their authentication requirements are documented in
+[`orca.md`](orca.md). The catalog records candidates and decisions; adoption
+happens in later tasks.
 
 ## Status legend
 
@@ -43,22 +46,25 @@ and #17), and React, TypeScript, Vite, and pnpm are initialized in the frontend
 | Tool                                    | Status | Notes                                                                                                     |
 | --------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------- |
 | AI coding agents (provider-independent) | In use | Governed by [`AGENTS.md`](../../AGENTS.md); no single vendor is assumed.                                  |
+| Orca                                    | In use | Workspaces, worktrees, terminals, and agent sessions; workflow in [`orca.md`](orca.md).                   |
 | Codex CLI                               | In use | Project skills discovery verified with `.agents/skills/`.                                                 |
 | OpenCode                                | In use | Project skills discovery verified with `.agents/skills/`.                                                 |
 | Claude Code                             | In use | Reads the same skills through relative links in `.claude/skills/`; discovery test pending authentication. |
 
 ## Agent skills
 
-| Tool                        | Status | Notes                                                                                               |
-| --------------------------- | ------ | --------------------------------------------------------------------------------------------------- |
-| `skills` CLI (`npx skills`) | In use | Version 1.7.2; project-scoped installs; lock file `skills-lock.json`. See [`skills.md`](skills.md). |
-| Installed Agent Skills      | In use | Five third-party skills, vendored under `.agents/skills/`.                                          |
+| Tool                        | Status   | Notes                                                                                               |
+| --------------------------- | -------- | --------------------------------------------------------------------------------------------------- |
+| `skills` CLI (`npx skills`) | In use   | Version 1.7.2; project-scoped installs; lock file `skills-lock.json`. See [`skills.md`](skills.md). |
+| Installed Agent Skills      | In use   | Five third-party skills, vendored under `.agents/skills/`.                                          |
+| Proposed stack skills       | Proposed | React, Django, and code-review candidates; not installed. See [`skills.md`](skills.md).             |
 
 ## Orchestration and autonomous execution
 
-| Tool                | Status             | Notes                                                                               |
-| ------------------- | ------------------ | ----------------------------------------------------------------------------------- |
-| Orchestration layer | Pending evaluation | Whether one is needed, and which, is **PENDING**. Out of scope for this foundation. |
+| Tool                | Status | Notes                                                                                                                       |
+| ------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------- |
+| Orca                | In use | Provides isolated worktrees, terminals, and agent sessions. Replaces the earlier **PENDING** orchestration decision.        |
+| Custom orchestrator | Rejected | Not built. Orca covers workspace isolation and agent launch; GitHub Issues and Pull Requests remain the source of truth.     |
 
 ## MCP tools
 
@@ -68,11 +74,13 @@ and #17), and React, TypeScript, Vite, and pnpm are initialized in the frontend
 
 ## Git and GitHub
 
-| Tool                           | Status | Notes                                             |
-| ------------------------------ | ------ | ------------------------------------------------- |
-| Git                            | In use | Version control; Conventional Commits convention. |
-| GitHub (issues, Pull Requests) | In use | Issue-driven workflow; see `AGENTS.md`.           |
-| GitHub CLI (`gh`)              | In use | Reading issues and opening Pull Requests.         |
+| Tool                           | Status | Notes                                                                                             |
+| ------------------------------ | ------ | ------------------------------------------------------------------------------------------------- |
+| Git                            | In use | Version control; Conventional Commits convention.                                                 |
+| GitHub (issues, Pull Requests) | In use | Issue-driven workflow; see [`orca.md`](orca.md).                                                  |
+| GitHub CLI (`gh`)              | In use | Reading issues, pushing branches, and opening Pull Requests. Requires an authenticated account.   |
+| GitHub authentication          | In use | `gh auth login` plus `gh auth status`; required scope `repo`. Never store tokens in the repository. |
+| Issue and PR templates         | In use | `.github/ISSUE_TEMPLATE/task.md` and `.github/pull_request_template.md`.                          |
 
 ## Testing and validation
 

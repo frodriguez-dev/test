@@ -9,19 +9,21 @@ It is a starting point for future decisions, not a final specification.
 ## Application architecture
 
 The repository is a monorepo with two deployable applications and shared
-documentation. The backend is initialized with Django, Django REST Framework, and
-PostgreSQL (issues #19 and #17) and the frontend with React, TypeScript, Vite,
-and pnpm (issue #18). Issue #21 adds `compose.yaml`, which runs the frontend,
-backend, and PostgreSQL together for local development. Their structure is
-defined in [`frontend/README.md`](../../frontend/README.md) and
-[`backend/README.md`](../../backend/README.md).
+documentation. The backend uses Django, Django REST Framework, and PostgreSQL;
+the frontend uses React, TypeScript, Vite, Tailwind CSS, shadcn/ui, and pnpm.
+`compose.yaml` runs the frontend, backend, and PostgreSQL together for local
+development, and the root `Makefile` wraps the common Docker Compose, uv, and
+pnpm commands. Application structure is defined in
+[`frontend/README.md`](../../frontend/README.md) and
+[`backend/README.md`](../../backend/README.md), and local setup in
+[`DEPLOYING.md`](../../DEPLOYING.md).
 
 | Layer                         | Location                                | Responsibility                                                                                                 | Depends on            |
 | ----------------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------- |
 | Frontend                      | `frontend/`                             | React/TypeScript single-page application: routing, UI, client-side state, and HTTP access to the API.          | Backend REST API only |
 | Backend                       | `backend/`                              | Django/DRF application: request handling, validation, business rules, persistence, and the versioned JSON API. | PostgreSQL            |
 | Data                          | PostgreSQL                              | Durable relational storage and constraints.                                                                    | —                     |
-| Documentation and AI guidance | `docs/`, `AGENTS.md`, `.agents/skills/` | Architecture, decisions, conventions, instructions, and task procedures.                                       | —                     |
+| Documentation and AI guidance | `docs/`, `AGENTS.md`, `.agents/skills/`, `.github/` | Architecture, decisions, conventions, instructions, task procedures, and templates. | — |
 
 ```
 Browser
@@ -69,6 +71,18 @@ PostgreSQL
 The rationale for these choices is recorded in
 [`docs/decisions.md`](../decisions.md).
 
+### Development workflow
+
+GitHub Issues define the unit of work. Each issue is implemented on a dedicated
+branch or Orca worktree, validated with the checks for the affected layer, and
+delivered as a Pull Request for human review. Agents may open or update the Pull
+Request but never merge or approve it. The commands, authentication
+requirements, and troubleshooting are documented in
+[`orca.md`](orca.md); the general rules are in [`AGENTS.md`](../../AGENTS.md).
+
+The GitHub Issue and Pull Request templates live in `.github/`. They keep the
+scope, validation, and risks visible without duplicating the repository rules.
+
 ## Building blocks
 
 The foundation separates three kinds of artifacts by **scope** and
@@ -84,6 +98,8 @@ Supporting documentation lives in `docs/ai/`:
 
 - `architecture.md` — this file: how the components fit together.
 - `conventions.md` — shared coding and repository conventions.
+- `orca.md` — issue-to-pull-request workflow, Orca commands, and GitHub
+  authentication.
 - `skills.md` — installed Agent Skills, provenance, and maintenance.
 - `tooling.md` — catalog of tools by status (in use, proposed, pending
   evaluation).
@@ -163,11 +179,14 @@ it portable:
 The following are intentionally unresolved and should be decided in future
 iterations:
 
-- **PENDING**: whether an orchestration layer is needed and, if so, which one.
 - **PENDING**: whether to adopt a Python type checker (for example Mypy) and
   coverage measurement (see `tooling.md`).
 - **PENDING**: which MCP servers, if any, to use and for which capabilities.
 - **PENDING**: whether skill updates should be automated with review gates; for
   now they are manual (see [`skills.md`](skills.md)).
-- **PENDING**: the project identity (the `pyproject.toml` name still reflects an
-  earlier temporary project and may need to be renamed or removed).
+- **PENDING**: the project identity (the root `pyproject.toml` name still
+  reflects an earlier temporary project and may need to be renamed or removed).
+
+Orca was adopted as the workspace and agent orchestration layer instead of a
+custom orchestrator; its operational workflow is documented in
+[`orca.md`](orca.md).

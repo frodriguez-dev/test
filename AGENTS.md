@@ -10,25 +10,32 @@ belong in skills (`.agents/skills/`); foundation notes belong in `docs/ai/`.
 
 - **Purpose.** A provider-independent monorepo for AI-assisted software
   development: shared instructions, a skills system, architecture notes, and the
-  React/Django application. The backend (Django and PostgreSQL) and the frontend
-  (React, TypeScript, Vite, and pnpm) are initialized. See `README.md`.
-- **Stack.** Frontend: React, TypeScript, Vite, and pnpm. Backend: Django,
-  Django REST Framework, PostgreSQL, and uv. Repository tooling: Python 3.10+
-  (see `pyproject.toml`); standard library only unless a dependency is
-  justified. Documentation and skills are plain Markdown.
+  React/Django application. The backend (Django REST Framework and PostgreSQL)
+  and the frontend (React, TypeScript, Vite, and pnpm) are implemented. See
+  `README.md`.
+- **Stack.** Frontend: React, TypeScript, Vite, Tailwind CSS, shadcn/ui, and
+  pnpm. Backend: Django, Django REST Framework, PostgreSQL, and uv. Repository
+  tooling: Python 3.10+, GNU Make, Docker Compose, and GitHub CLI. Documentation
+  and skills are plain Markdown.
 - **Layout.**
   - `AGENTS.md` — general rules that apply to every task (this file).
   - `frontend/` — React single-page application; see `frontend/README.md`.
   - `backend/` — Django REST API; see `backend/README.md`.
-  - `docs/` — architecture, decisions, conventions, and tooling notes.
+  - `docs/` — architecture, decisions, conventions, and workflow notes.
   - `.agents/skills/` — reusable, task-specific skills.
-- **Tooling.** The backend (Django, psycopg, uv, Ruff, pytest) and frontend
+  - `.github/` — Issue and Pull Request templates.
+  - `Makefile`, `DEPLOYING.md` — development commands and local setup.
+- **Tooling.** The backend (Django, DRF, psycopg, uv, Ruff, pytest) and frontend
   (React, TypeScript, Vite, pnpm, ESLint, Prettier, Vitest) toolchains are
-  installed. Remaining choices are tracked as *PENDING* or *proposed* in
-  `docs/ai/tooling.md`. Do not assume other tools or MCP servers exist.
+  installed. The API contract is generated with drf-spectacular and committed at
+  `docs/api/openapi.yaml`. Orca manages workspaces and agents, and `gh` handles
+  GitHub issues and pull requests. Remaining choices are tracked as *PENDING* or
+  *proposed* in `docs/ai/tooling.md`. Do not assume other tools or MCP servers
+  exist.
 - **Read on demand:** `docs/ai/architecture.md` for how the components relate,
   `docs/decisions.md` for the rationale behind the stack and boundaries,
-  `docs/ai/conventions.md` for coding and repository conventions, and
+  `docs/ai/conventions.md` for coding and repository conventions,
+  `docs/ai/orca.md` for the issue-to-pull-request workflow, and
   `docs/ai/tooling.md` for available tools. Do not read everything before every
   change.
 
@@ -46,6 +53,24 @@ belong in skills (`.agents/skills/`); foundation notes belong in `docs/ai/`.
 6. **Run the applicable checks** (see *Testing and quality*).
 7. **Review your own diff** and fix problems you introduced.
 8. **Deliver a verifiable summary** (see *Completion report*).
+
+## Issue-driven workflow
+
+GitHub Issues are the unit of work. The detailed Orca and GitHub commands,
+authentication requirements, and troubleshooting are in
+[`docs/ai/orca.md`](docs/ai/orca.md). The general sequence is:
+
+1. Read the issue and its acceptance criteria before changing anything.
+2. Work on a dedicated branch or Orca worktree for that issue. One issue per
+   branch and pull request; do not reuse another task's branch.
+3. Implement only the issue scope, with tests or documentation as needed.
+4. Run the checks that cover the change and review your own diff.
+5. Commit with Conventional Commits and reference the issue.
+6. Push the branch and open or update a Pull Request that states the summary,
+   validation, and risks.
+7. **Do not merge, approve, close, or enable auto-merge on the Pull Request.**
+   Merging and approval belong to a human, even when the agent has permission.
+8. Report the Pull Request URL and any unresolved questions.
 
 ## Architecture and coding standards
 
@@ -67,12 +92,17 @@ belong in skills (`.agents/skills/`); foundation notes belong in `docs/ai/`.
 
 - Run the checks that cover your change; the commands are documented in
   [`docs/ai/conventions.md`](docs/ai/conventions.md#tests). Do not claim a check
-  passed unless you actually ran it.
+  passed unless you actually ran it. `make help` lists the available development
+  targets.
 - Run the affected suite first, then widen validation if the impact justifies
   it. Frontend and backend test suites are separate; run the one that covers the
-  change.
+  change. Documentation-only changes still need a diff review and
+  `git diff --check`.
 - Add or update tests alongside behavior changes; a behavior change without
   applicable tests is incomplete unless the limitation is documented.
+- If the API surface changes, regenerate the committed OpenAPI snapshot
+  (`docs/api/openapi.yaml`) and the frontend types, then rerun the affected
+  checks. Tests fail when the snapshot is stale.
 - Never hide errors, for example by weakening assertions, catching exceptions
   broadly, or skipping tests. Fix the cause.
 - Report any check you could not run and why.
@@ -97,6 +127,9 @@ belong in skills (`.agents/skills/`); foundation notes belong in `docs/ai/`.
 
 - Work on a dedicated branch when the task calls for it. Do not reuse or modify
   branches you did not create.
+- Use a descriptive branch name such as `feature/<summary>`, `fix/<summary>`, or
+  `chore/<summary>`. Keep an Orca-generated `<account>/<summary>` branch as
+  created instead of renaming another agent's branch.
 - Use Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`,
   `test:`) in English, imperative mood, one logical change per commit.
 - Keep commits and diffs within the task scope; exclude unrelated changes.
@@ -104,10 +137,13 @@ belong in skills (`.agents/skills/`); foundation notes belong in `docs/ai/`.
 - Review the diff before publishing.
 - Never rewrite shared history or force-push shared branches without explicit
   confirmation.
+- Authenticate GitHub with `gh auth login` and verify `gh auth status` before
+  pushing or opening a pull request. Never commit tokens or credentials. See
+  [`docs/ai/orca.md`](docs/ai/orca.md#prerequisites-and-authentication).
 - When the orchestrator's permissions explicitly authorize it, you may create
   commits, push your branch, and open or update a pull request without asking
-  again. GitHub access alone does **not** authorize merges, changes to protected
-  branches, or destructive Git operations.
+  again. GitHub access alone does **not** authorize merges, approvals, changes to
+  protected branches, closing a pull request, or destructive Git operations.
 - Document what changed, the validations performed, and open questions in the
   pull request, and link it to its issue when possible.
 
