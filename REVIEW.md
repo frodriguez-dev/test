@@ -208,29 +208,29 @@ medium or high risk and require a human; never lower requirements silently.
 - [ ] No secret, credential, or generated runtime file is included.
 - [ ] A human approval names the current head SHA.
 
-**Reject a change when:** a `BLOCKER` or `MAJOR` is unresolved; an
-`INCONCLUSIVE` is counted as clean; a required check fails or is hidden; scope
-creep or a contract break lacks justification; approval is stale; or an agent
-approved, merged, or altered protection.
+**Reject a change when any of these is true:**
 
-**Accept a finding only when:** it meets the evidence bar; its severity and
-`pre_existing` flag are justified; it is reproducible or has a precise code path;
-it is not formatter/linter duplication; and its fingerprint is unique or repeats
-an unchanged finding by ID.
+- [ ] A `BLOCKER` or `MAJOR` is unresolved, or an `INCONCLUSIVE` is counted as clean.
+- [ ] A required check fails or is hidden, scope creep or a contract break lacks justification, approval is stale, or an agent approved/merged/altered protection.
 
-**Reject a finding when:** it is speculative, has no file/line or scenario, is
-only style preference outside the policy, duplicates tool output, targets
-unchanged code already reported, or its severity overstates the impact.
+**Accept a finding only when:**
+
+- [ ] It meets the evidence bar, its severity and `pre_existing` flag are justified, and it is reproducible or has a precise code path.
+- [ ] It is not formatter/linter duplication, and its fingerprint is unique or repeats an unchanged finding by ID.
+
+**Reject a finding when any of these is true:**
+
+- [ ] It is speculative, has no file/line or scenario, or is only style preference outside the policy.
+- [ ] It duplicates tool output, targets unchanged code already reported, or its severity overstates the impact.
 
 ## 11. Reporting requirements
 Report the result in the envelope from section 6, with counts by severity, the
 pre-existing count, suppressed-nit count, evidence, commands run and their
 results, base and head SHAs, policy version, reviewer and tool versions,
 limitations, the truncation flag, and the required human action. Findings must be
-readable without opening the diff.
-
-Never include secrets, tokens, credentials, or personal data in a report. Redact
-sensitive evidence and state that it was redacted. A report is not an approval.
+readable without opening the diff. Never include secrets, tokens, credentials, or
+personal data in a report. Redact sensitive evidence and state that it was
+redacted. A report is not an approval.
 
 ## 12. Change control
 This policy is versioned with semantic versioning: a major bump for a breaking
