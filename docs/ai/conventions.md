@@ -151,6 +151,9 @@ Do not commit generated or runtime files. The following are ignored via
   the full workflow.
 - Agents may open or update a Pull Request when authorized, but must not merge,
   approve, close, or enable auto-merge on it. Merging is a human decision.
+- Follow [`REVIEW.md`](../../REVIEW.md) for review criteria, severity, evidence,
+  fingerprints, convergence, and human approval. Human approval is tied to the
+  reviewed commit SHA; a new commit invalidates it.
 - Respond to review feedback on the same branch and Pull Request; do not open a
   duplicate Pull Request.
 

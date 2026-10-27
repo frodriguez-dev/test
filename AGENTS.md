@@ -2,9 +2,11 @@
 
 Instructions for AI coding agents working in this repository.
 
-This file is the single, provider-independent source of truth for how agents
-behave here. It is intentionally concise. Detailed, task-specific procedures
-belong in skills (`.agents/skills/`); foundation notes belong in `docs/ai/`.
+This file is the single, provider-independent source of truth for general agent
+behavior here; the code review contract is
+[`REVIEW.md`](REVIEW.md). It is intentionally concise. Detailed, task-specific
+procedures belong in skills (`.agents/skills/`); foundation notes belong in
+`docs/ai/`.
 
 ## Project context
 
@@ -19,6 +21,8 @@ belong in skills (`.agents/skills/`); foundation notes belong in `docs/ai/`.
   and skills are plain Markdown.
 - **Layout.**
   - `AGENTS.md` — general rules that apply to every task (this file).
+  - [`REVIEW.md`](REVIEW.md) — canonical code review policy, severity, and
+    approval contract.
   - `frontend/` — React single-page application; see `frontend/README.md`.
   - `backend/` — Django REST API; see `backend/README.md`.
   - `docs/` — architecture, decisions, conventions, and workflow notes.
@@ -35,7 +39,8 @@ belong in skills (`.agents/skills/`); foundation notes belong in `docs/ai/`.
 - **Read on demand:** `docs/ai/architecture.md` for how the components relate,
   `docs/decisions.md` for the rationale behind the stack and boundaries,
   `docs/ai/conventions.md` for coding and repository conventions,
-  `docs/ai/orca.md` for the issue-to-pull-request workflow, and
+  `docs/ai/orca.md` for the issue-to-pull-request workflow,
+  [`REVIEW.md`](REVIEW.md) for the code review standards, and
   `docs/ai/tooling.md` for available tools. Do not read everything before every
   change.
 
@@ -144,6 +149,8 @@ authentication requirements, and troubleshooting are in
   commits, push your branch, and open or update a pull request without asking
   again. GitHub access alone does **not** authorize merges, approvals, changes to
   protected branches, closing a pull request, or destructive Git operations.
+- Follow [`REVIEW.md`](REVIEW.md) for review standards. Human approval is
+  required and is tied to the reviewed commit SHA; a bot cannot approve.
 - Document what changed, the validations performed, and open questions in the
   pull request, and link it to its issue when possible.
 
@@ -162,7 +169,8 @@ authentication requirements, and troubleshooting are in
 
 ## Responding to review feedback
 
-- Read the comments and decide which ones require changes.
+- Read [`REVIEW.md`](REVIEW.md) and the comments, then decide which ones require
+  changes.
 - Apply corrections within the authorized scope on the same branch.
 - Re-run the checks affected by the change.
 - Update the existing pull request instead of opening a new one.
