@@ -29,7 +29,11 @@ Commands and results:
 
 ## Review readiness
 
+Review policy: [`REVIEW.md`](../REVIEW.md).
+
 - [ ] The change stays within the issue scope.
 - [ ] Tests and documentation were updated where needed.
 - [ ] No secrets or generated runtime files are included.
+- [ ] Findings follow the severity, evidence, and fingerprint contracts in `REVIEW.md`.
+- [ ] A human approval names the current head SHA; no agent approved or merged this pull request.
 - [ ] This pull request is ready for human review; it will not be merged by an agent.

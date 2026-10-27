@@ -40,6 +40,7 @@ and GitHub issue workflow.
 ```
 .
 ├── AGENTS.md            # Instructions for AI coding agents
+├── REVIEW.md            # Canonical code review policy
 ├── README.md            # This file
 ├── DEPLOYING.md         # Step-by-step local development guide
 ├── Makefile             # Development commands for Docker and local toolchains
@@ -70,21 +71,22 @@ and GitHub issue workflow.
 Read the foundation in this order:
 
 1. [`AGENTS.md`](AGENTS.md) — how agents should work in this repository.
-2. [`docs/ai/orca.md`](docs/ai/orca.md) — the issue-to-pull-request workflow
+2. [`REVIEW.md`](REVIEW.md) — code review standards, severity, and approval.
+3. [`docs/ai/orca.md`](docs/ai/orca.md) — the issue-to-pull-request workflow
    with Orca and GitHub.
-3. [`docs/ai/architecture.md`](docs/ai/architecture.md) — how the application
+4. [`docs/ai/architecture.md`](docs/ai/architecture.md) — how the application
    layers and the AI foundation fit together.
-4. [`docs/decisions.md`](docs/decisions.md) — why the stack and boundaries were
+5. [`docs/decisions.md`](docs/decisions.md) — why the stack and boundaries were
    chosen.
-5. [`docs/ai/conventions.md`](docs/ai/conventions.md) — coding, repository, and
+6. [`docs/ai/conventions.md`](docs/ai/conventions.md) — coding, repository, and
    dependency conventions.
-6. [`docs/ai/tooling.md`](docs/ai/tooling.md) — tools that are used, proposed,
+7. [`docs/ai/tooling.md`](docs/ai/tooling.md) — tools that are used, proposed,
    or still being evaluated.
-7. [`docs/ai/skills.md`](docs/ai/skills.md) — installed Agent Skills,
+8. [`docs/ai/skills.md`](docs/ai/skills.md) — installed Agent Skills,
    provenance, and maintenance.
-8. [`.agents/skills/`](.agents/skills/README.md) — reusable agent skills.
-9. [`DEPLOYING.md`](DEPLOYING.md) — how to start and verify the development
-   environment.
+9. [`.agents/skills/`](.agents/skills/README.md) — reusable agent skills.
+10. [`DEPLOYING.md`](DEPLOYING.md) — how to start and verify the development
+    environment.
 
 ## Local development with Docker Compose
 
@@ -160,5 +162,6 @@ cover the frontend.
 choices are tracked as _PENDING_ in the `docs/ai/` documents rather than assumed.
 A first set of professional Agent Skills is installed and versioned in the
 repository; see [`docs/ai/skills.md`](docs/ai/skills.md). Issue and Pull Request
-templates live in `.github/`, and the Orca-based issue workflow is documented in
-[`docs/ai/orca.md`](docs/ai/orca.md).
+templates live in `.github/`, the Orca-based issue workflow is documented in
+[`docs/ai/orca.md`](docs/ai/orca.md), and the canonical review policy is
+[`REVIEW.md`](REVIEW.md).

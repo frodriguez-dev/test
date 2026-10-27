@@ -23,7 +23,7 @@ pnpm commands. Application structure is defined in
 | Frontend                      | `frontend/`                             | React/TypeScript single-page application: routing, UI, client-side state, and HTTP access to the API.          | Backend REST API only |
 | Backend                       | `backend/`                              | Django/DRF application: request handling, validation, business rules, persistence, and the versioned JSON API. | PostgreSQL            |
 | Data                          | PostgreSQL                              | Durable relational storage and constraints.                                                                    | —                     |
-| Documentation and AI guidance | `docs/`, `AGENTS.md`, `.agents/skills/`, `.github/` | Architecture, decisions, conventions, instructions, task procedures, and templates. | — |
+| Documentation and AI guidance | `docs/`, `AGENTS.md`, `REVIEW.md`, `.agents/skills/`, `.github/` | Architecture, decisions, review policy, conventions, instructions, task procedures, and templates. | — |
 
 ```
 Browser
@@ -79,6 +79,8 @@ delivered as a Pull Request for human review. Agents may open or update the Pull
 Request but never merge or approve it. The commands, authentication
 requirements, and troubleshooting are documented in
 [`orca.md`](orca.md); the general rules are in [`AGENTS.md`](../../AGENTS.md).
+Review standards, severity, evidence, and the approval contract are defined in
+[`REVIEW.md`](../../REVIEW.md).
 
 The GitHub Issue and Pull Request templates live in `.github/`. They keep the
 scope, validation, and risks visible without duplicating the repository rules.
@@ -104,14 +106,19 @@ Supporting documentation lives in `docs/ai/`:
 - `tooling.md` — catalog of tools by status (in use, proposed, pending
   evaluation).
 
+The canonical review policy is the root [`REVIEW.md`](../../REVIEW.md); it is
+referenced rather than duplicated here.
+
 Fundamental architecture decisions are recorded in
 [`docs/decisions.md`](../decisions.md). Application layout is documented in
 `frontend/README.md` and `backend/README.md`.
 
 ## Responsibilities of `AGENTS.md`
 
-`AGENTS.md` is the **single, provider-independent source of truth** for agent
-behavior in this repository. It must remain:
+`AGENTS.md` is the **single, provider-independent source of truth** for general
+agent behavior in this repository. Review criteria, severity, evidence, and
+human approval are owned by the root [`REVIEW.md`](../../REVIEW.md) and are not
+restated here. `AGENTS.md` must remain:
 
 - **General**: it applies to every task, not to one specific workflow.
 - **Stable**: it changes only when the repository's ground rules change.
