@@ -18,7 +18,8 @@ the frontend to the API with a typed HTTP client, and issue #24 added session
 authentication with a login screen and protected routes. Issue #25 added Ruff,
 pytest, ESLint, Prettier, Vitest, and React Testing Library. Issue #37 added the
 root `Makefile` and [`DEPLOYING.md`](DEPLOYING.md). Issue #27 documented the Orca
-and GitHub issue workflow.
+and GitHub issue workflow. Issue #44 added the local quality gate, Mypy, and the
+complexity and security checks.
 
 | Layer    | Stack                                                | Location                     |
 | -------- | ---------------------------------------------------- | ---------------------------- |
@@ -43,7 +44,8 @@ and GitHub issue workflow.
 ├── REVIEW.md            # Canonical code review policy
 ├── README.md            # This file
 ├── DEPLOYING.md         # Step-by-step local development guide
-├── Makefile             # Development commands for Docker and local toolchains
+├── Makefile             # Development commands for Docker, local toolchains, and quality
+├── pytest.ini           # Root pytest entry point for the tooling tests
 ├── THIRD_PARTY_NOTICES.md  # Licenses for vendored skills
 ├── skills-lock.json     # Agent Skills installer lock file
 ├── compose.yaml         # Development environment: frontend, backend, and db
@@ -59,6 +61,8 @@ and GitHub issue workflow.
 ├── frontend/            # React SPA (initialized: React, TypeScript, Vite, pnpm)
 │   ├── Dockerfile       # Development image
 │   └── README.md        # Frontend structure, commands, and boundaries
+├── tools/
+│   └── agent_pipeline/  # Repository tooling; owns the local quality gate
 └── docs/
     ├── decisions.md     # Fundamental architecture decisions
     ├── api/
@@ -130,13 +134,59 @@ For the non-Docker setup, follow [`DEPLOYING.md`](DEPLOYING.md) or see
 
 ## Quality checks
 
-Run the checks for the layer you changed:
+`make quality` runs every required backend, frontend, complexity, and security
+check through the repository-level tooling package in
+[`tools/agent_pipeline/`](tools/agent_pipeline/README.md). It prints a summary,
+writes `.quality/quality.json` (`schema_version = 1`), and keeps capped per-check
+logs in `.quality/logs/`. Both are ignored by Git. The command is local only; it
+does not use GitHub Actions or a hosted runner.
+
+```sh
+make quality                         # every required check
+make quality-backend                 # backend checks only
+make quality-frontend                # frontend checks only
+make quality-complexity              # C901 and ESLint complexity only
+make quality-security                # security checks; network checks stay opt-in
+make quality-tests                   # tests for the quality-gate tooling
+make quality QUALITY_ARGS="--json --output /tmp/quality.json"
+make quality QUALITY_ARGS="--security-network"
+```
+
+The gate requires PostgreSQL and `backend/.env` (copy `.env.example`), backend
+dependencies from `uv sync`, and frontend dependencies from `pnpm install`.
+`backend-test` and `frontend-build` reuse the existing Make targets; the other
+checks use the documented Ruff, Mypy, and pnpm commands.
+
+| Exit | Gate status | Meaning                                                                    |
+| ---- | ----------- | -------------------------------------------------------------------------- |
+| `0`  | `PASS`      | Every required check passed.                                               |
+| `1`  | `FAIL`      | At least one required check failed.                                        |
+| `2`  | `ERROR`     | A required check was skipped, timed out, or could not start; or the config is invalid. |
+
+GNU Make reports `2` for any failed recipe, so the exact `1` versus `2` code is
+available from the direct CLI command and in `.quality/quality.json`. On a clean
+run `make quality` exits `0`.
+
+A missing tool or timeout is never reported as `PASS`. Network-dependent
+`uv audit` and `pnpm audit` are optional and report `SKIP` unless
+`--security-network` is passed. Ruff `S` runs offline and is required.
+
+Thresholds, timeouts, and the security opt-in live in
+[`tools/agent_pipeline/pyproject.toml`](tools/agent_pipeline/pyproject.toml);
+unknown keys are rejected. The complexity baseline is 10 for both Python (Ruff
+`C901`) and TypeScript (ESLint core `complexity`). Mypy type checking is required
+for the backend. See [`docs/ai/conventions.md`](docs/ai/conventions.md#tests) for
+the per-layer commands and [`docs/ai/tooling.md`](docs/ai/tooling.md) for the
+security decisions.
+
+To run a single layer directly:
 
 ```sh
 # Backend (from backend/); requires PostgreSQL
 uv run --env-file .env pytest
 uv run ruff check .
 uv run ruff format --check .
+uv run mypy manage.py config apps
 
 # Frontend (from frontend/)
 pnpm check   # typecheck, lint, format check, and tests
@@ -155,10 +205,10 @@ infrastructure endpoint `GET /api/health/`, the generated OpenAPI contract at
 `/api/schema/` and `/api/docs/`, and session authentication endpoints under
 `/api/v1/auth/`. The frontend calls the API through a centralized HTTP client
 with generated TypeScript types, shows the health check's loading, success, and
-error states, and protects an example route behind a login screen. Ruff and
-pytest cover the backend; ESLint, Prettier, Vitest, and React Testing Library
-cover the frontend.
-`make up-build` starts the complete development stack. Unresolved
+error states, and protects an example route behind a login screen. Ruff, Mypy,
+and pytest cover the backend; ESLint, Prettier, Vitest, and React Testing Library
+cover the frontend. `make quality` runs the full local gate and writes a stable
+JSON result. `make up-build` starts the complete development stack. Unresolved
 choices are tracked as _PENDING_ in the `docs/ai/` documents rather than assumed.
 A first set of professional Agent Skills is installed and versioned in the
 repository; see [`docs/ai/skills.md`](docs/ai/skills.md). Issue and Pull Request

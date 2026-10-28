@@ -15,6 +15,7 @@ package = false
 
 [dependency-groups]
 dev = [
+    "mypy>=2.4.0",
     "pytest>=9.1.1",
     "pytest-django>=4.14.0",
     "ruff>=0.17.1",
@@ -31,7 +32,39 @@ target-version = "py310"
 line-length = 88
 
 [tool.ruff.lint]
-select = ["B", "E", "F", "I", "UP"]
+select = ["B", "C90", "E", "F", "I", "S", "UP"]
+
+[tool.ruff.lint.mccabe]
+# Baseline for the quality gate (tools/agent_pipeline/pyproject.toml). The
+# current backend maximum is 2, so this is a guardrail rather than a ratchet.
+max-complexity = 10
+
+[tool.ruff.lint.per-file-ignores]
+# Test fixtures use literal passwords for local users; they are not secrets.
+"apps/**/tests/*.py" = ["S105", "S106"]
 
 [tool.ruff.format]
 quote-style = "double"
+
+[tool.mypy]
+python_version = "3.10"
+files = ["manage.py", "config", "apps"]
+check_untyped_defs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+no_implicit_optional = true
+
+# Django and DRF do not ship type markers. Stubs are not adopted yet, so their
+# imports are ignored instead of making the required check unusable. Local
+# code is still checked, including untyped function bodies.
+[[tool.mypy.overrides]]
+module = [
+    "django",
+    "django.*",
+    "rest_framework",
+    "rest_framework.*",
+    "drf_spectacular",
+    "drf_spectacular.*",
+    "yaml",
+]
+ignore_missing_imports = true

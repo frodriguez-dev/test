@@ -11,23 +11,35 @@ apply on top of the general rules in [`AGENTS.md`](../../AGENTS.md).
 
 ## Python
 
-- Target Python 3.10 or higher, as declared in `pyproject.toml`.
+- Target Python 3.10 or higher for the backend, as declared in
+  `backend/pyproject.toml`.
+- Repository tooling under `tools/agent_pipeline/` targets Python 3.11 or higher
+  so it can use `tomllib` from the standard library. Keep the backend at 3.10;
+  do not raise it just to match the tooling.
 - Follow [PEP 8](https://peps.python.org/pep-0008/).
 - Add type hints where they improve clarity; avoid redundant annotations.
 - Prefer small, single-purpose functions and clear names.
 - Rely on the standard library. Justify any new dependency in the task and add
-  it to `pyproject.toml` with a reason.
+  it to `pyproject.toml` with a reason. The tooling runtime is standard-library
+  only; pytest is a development dependency.
 
 ## Repository layout
 
 - Application code lives in `frontend/` and `backend/`; each application owns its
   manifest, lock file, and tests.
+- Repository-level tooling lives in `tools/agent_pipeline/`. It owns its
+  `pyproject.toml`, `uv.lock`, package, and tests, and is the single entry point
+  for the quality gate. Do not add quality-gate shell scripts elsewhere.
 - Shared documentation and architecture decisions live in `docs/`; agent
   instructions live in `AGENTS.md`; reusable agent skills live under
   `.agents/skills/<name>/`.
 - Issue and Pull Request templates live in `.github/`.
 - The root `Makefile` and `DEPLOYING.md` describe the supported local
-  development commands; they delegate to Docker Compose, uv, and pnpm.
+  development commands; they delegate to Docker Compose, uv, and pnpm. The
+  `quality*` targets delegate to `tools/agent_pipeline/`.
+- Root `pytest.ini` points the documented tooling test command at
+  `tools/agent_pipeline/tests/`; the backend keeps its own pytest configuration
+  in `backend/pyproject.toml`.
 - Structure and conventions for each application are documented in
   [`frontend/README.md`](../../frontend/README.md) and
   [`backend/README.md`](../../backend/README.md).
@@ -73,6 +85,39 @@ Do not create empty directories or files without a documented purpose.
 
 ## Tests
 
+- `make quality` is the single local gate. It runs the backend, frontend,
+  complexity, and security checks described below, prints a summary, and writes
+  `.quality/quality.json` plus capped logs under `.quality/logs/`. Both paths
+  are ignored by Git.
+
+  ```sh
+  make quality
+  make quality-backend      # --layer backend
+  make quality-frontend     # --layer frontend
+  make quality-complexity   # Ruff C901 and ESLint core complexity
+  make quality-security     # Ruff S plus opt-in network audits
+  make quality-tests        # tests for the tooling package
+  make quality QUALITY_ARGS="--json --output /tmp/quality.json"
+  ```
+
+  Exit codes are stable: `0` when every required check passes, `1` when a
+  required check fails, and `2` when a required check is skipped, times out, or
+  cannot start, or when the configuration is invalid. A missing tool is never
+  reported as `PASS`. GNU Make itself reports `2` for any failed recipe; the
+  exact gate code is in the JSON report and from the direct CLI. The report
+  contract and CLI flags are documented in
+  [`tools/agent_pipeline/README.md`](../../tools/agent_pipeline/README.md).
+
+  Thresholds, timeouts, and security opt-ins live in
+  `tools/agent_pipeline/pyproject.toml`. The complexity maximum is 10 for both
+  Python (Ruff `C901`) and TypeScript (ESLint core `complexity`). Unknown keys
+  and unknown timeout check ids are rejected. Run the tooling tests from the
+  repository root with:
+
+  ```sh
+  uv run --project tools/agent_pipeline pytest
+  ```
+
 - The backend uses pytest with pytest-django; tests live under each app's
   `tests/` directory. Run the suite from `backend/`:
 
@@ -80,7 +125,13 @@ Do not create empty directories or files without a documented purpose.
   uv run --env-file .env pytest
   uv run ruff check .
   uv run ruff format --check .
+  uv run mypy manage.py config apps
   ```
+
+  Ruff also selects `C90` (mccabe) and `S` (bandit); `backend/pyproject.toml`
+  records the mccabe baseline and the narrow test-only `S105`/`S106` ignores.
+  Mypy ignores missing third-party stubs for Django, DRF, drf-spectacular, and
+  PyYAML until stubs are adopted; local code is still checked.
 
   The tests use PostgreSQL and create a test database, so the configured role
   needs permission to create databases. Inside Docker Compose, use
@@ -96,7 +147,9 @@ Do not create empty directories or files without a documented purpose.
   ```
 
   Individual commands are `pnpm typecheck`, `pnpm lint`, `pnpm format:check`,
-  and `pnpm test`.
+  `pnpm test`, and `pnpm build`. `eslint.config.js` enables the core
+  `complexity` rule with a maximum of 10 and ignores generated
+  `src/types/api/`.
 
 - The OpenAPI contract is generated from the backend. When the API surface
   changes, regenerate the snapshot and the frontend types, then rerun the
@@ -125,6 +178,7 @@ Do not commit generated or runtime files. The following are ignored via
 - Node: `node_modules/`, `dist/`, `coverage/`
 - Environment and secrets: `.env`, `.env.*` (except `.env.example`)
 - Local runtime data: `backend/media/`, `backend/staticfiles/`
+- Quality gate artifacts: `.quality/` (JSON report and capped check logs)
 
 ## Git workflow
 

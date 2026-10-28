@@ -23,7 +23,7 @@ class CsrfTokenView(APIView):
     frontend can send it in the ``X-CSRFToken`` header on unsafe requests.
     """
 
-    authentication_classes = []
+    authentication_classes: list[type] = []
     permission_classes = [AllowAny]
 
     @extend_schema(

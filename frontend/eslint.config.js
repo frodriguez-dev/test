@@ -22,6 +22,12 @@ export default tseslint.config(
       ecmaVersion: 2023,
       globals: globals.browser,
     },
+    rules: {
+      // Guardrail shared with the quality gate
+      // (tools/agent_pipeline/pyproject.toml). The current maximum is 10 in
+      // src/api/client.ts; keep the common baseline instead of a ratchet.
+      complexity: ['error', 10],
+    },
   },
   {
     files: ['src/components/ui/**/*.{ts,tsx}'],

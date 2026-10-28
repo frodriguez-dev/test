@@ -1,0 +1,58 @@
+[project]
+name = "agent-pipeline"
+version = "0.1.0"
+description = "Local quality-gate tooling for the repository."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+agent-pipeline = "agent_pipeline.quality.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = ["pytest>=9.1.1"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.agent_pipeline.quality]
+schema_version = 1
+output_dir = ".quality"
+default_timeout_seconds = 600
+max_output_bytes = 65536
+
+[tool.agent_pipeline.quality.thresholds]
+# Baseline measured on the current tree: the highest values are getCsrfToken
+# (10) in the frontend and 2 in the backend. Keep the ratchet at the common
+# industry baseline instead of allowing new functions to drift upwards.
+python_complexity = 10
+typescript_complexity = 10
+
+[tool.agent_pipeline.quality.timeouts]
+backend-lint = 180
+backend-format = 180
+backend-typecheck = 300
+backend-test = 900
+frontend-typecheck = 300
+frontend-lint = 300
+frontend-format = 180
+frontend-test = 600
+frontend-build = 600
+backend-complexity = 180
+frontend-complexity = 300
+python-security = 180
+uv-audit = 180
+pnpm-audit = 180
+
+[tool.agent_pipeline.quality.security]
+# Network-dependent checks are opt-in: they report SKIP by default and never
+# PASS unless `--security-network` actually runs them.
+uv_audit = "optional"
+pnpm_audit = "optional"
+# Ruff S is already installed with Ruff and runs offline.
+ruff_s = "required"
