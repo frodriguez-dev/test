@@ -20,3 +20,6 @@ coverage/
 # Local backend runtime data
 backend/media/
 backend/staticfiles/
+
+# Quality-gate reports and per-check logs
+.quality/

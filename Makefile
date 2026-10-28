@@ -22,6 +22,10 @@ FRONTEND_PORT ?= 5173
 BACKEND_DIR ?= backend
 FRONTEND_DIR ?= frontend
 BACKEND_ENV_FILE ?= .env
+TOOLS_DIR ?= tools/agent_pipeline
+
+QUALITY_CMD = uv run --project $(TOOLS_DIR) python -m agent_pipeline quality
+QUALITY_ARGS ?=
 
 # Docker Compose reads these from the environment and falls back to the same
 # defaults in compose.yaml.
@@ -31,7 +35,9 @@ export BACKEND_PORT FRONTEND_PORT
 
 .PHONY: help up up-build down down-volumes logs status health shell-backend \
 	shell-frontend shell-db backend-install backend-migrate backend-dev \
-	backend-test frontend-install frontend-dev frontend-build
+	backend-test frontend-install frontend-dev frontend-build quality \
+	quality-backend quality-frontend quality-complexity quality-security \
+	quality-tests
 
 help: ## Show the available targets and point to DEPLOYING.md
 	@echo "Development commands for this repository"
@@ -46,6 +52,7 @@ help: ## Show the available targets and point to DEPLOYING.md
 	@echo "  BACKEND_PORT=8000     FRONTEND_PORT=5173"
 	@echo "  BACKEND_SERVICE=backend  FRONTEND_SERVICE=frontend  DB_SERVICE=db"
 	@echo "  COMPOSE=\"docker compose\"  COMPOSE_FILE=compose.yaml"
+	@echo "  QUALITY_ARGS=\"--json --output /tmp/quality.json\""
 	@echo
 	@echo "See DEPLOYING.md for prerequisites, environment setup, and troubleshooting."
 
@@ -112,6 +119,26 @@ frontend-dev: ## Start the Vite development server
 
 frontend-build: ## Type-check and build the frontend for production
 	cd $(FRONTEND_DIR) && pnpm build
+
+# --- Quality gate ----------------------------------------------------------
+
+quality: ## Run every required local quality check and write .quality/quality.json
+	$(QUALITY_CMD) $(QUALITY_ARGS)
+
+quality-backend: ## Run only the backend quality checks
+	$(QUALITY_CMD) --layer backend $(QUALITY_ARGS)
+
+quality-frontend: ## Run only the frontend quality checks
+	$(QUALITY_CMD) --layer frontend $(QUALITY_ARGS)
+
+quality-complexity: ## Run only the Python and TypeScript complexity checks
+	$(QUALITY_CMD) --layer complexity $(QUALITY_ARGS)
+
+quality-security: ## Run only the security checks (network checks stay opt-in)
+	$(QUALITY_CMD) --layer security $(QUALITY_ARGS)
+
+quality-tests: ## Run the tests for the quality-gate tooling
+	uv run --project $(TOOLS_DIR) pytest
 
 # --- Unknown targets -------------------------------------------------------
 
